@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import TabelaStudenata from './components/TabelaStudenata.vue';
 import Pretraga from './components/Pretraga.vue';
 import StudentForma from './components/StudentForma.vue';
+import StudentPredmeti from './components/StudentPredmeti.vue';
 import axios from 'axios'
 
 const Studenti = ref([])
@@ -40,9 +41,9 @@ const IzmeniStudenta = (arg)=>{
 onMounted(() => {
   DohvatiStudente()
 })
-const Test = (arg) => {
+const Izmeni = (arg) => {
   student.value = arg
-  console.log(arg);
+  //console.log(arg);
 }
 
 const filtrirano = computed(() => {
@@ -52,13 +53,19 @@ const filtrirano = computed(() => {
   })
 })
 
+const studentPredmeti = ref()
+const Predmeti = (student)=>{
+  //console.log(student);
+  studentPredmeti.value = student
+}
 
 </script>
 
 <template>
   <StudentForma :student="student" @sacuvaj="IzmeniStudenta"></StudentForma>
   <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
-  <TabelaStudenata :studenti="filtrirano" @izmeni="Test"></TabelaStudenata>
+  <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
+  <StudentPredmeti :student="studentPredmeti"></StudentPredmeti>
 </template>
 
 <style scoped></style>
