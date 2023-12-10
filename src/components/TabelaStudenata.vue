@@ -7,8 +7,9 @@ const emits = defineEmits(["izmeni"])
 <template>
     <table>
         <thead> <!-- Izmeniti ovo za studente kad proradi API -->
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Ime</th>
+            <th>Prezime</th>
+            <th>Broj indeksa</th>
             <th>Actions</th>
         </thead>
         <tbody>

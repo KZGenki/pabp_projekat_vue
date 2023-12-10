@@ -8,11 +8,12 @@ import axios from 'axios'
 const Studenti = ref([])
 const kriterijum = ref("")
 const student = ref()
+
 const DohvatiStudente = () => {
-  axios.get("http://94.156.189.137:8000/api/Employees")
+  axios.get("http://pabp.viser.edu.rs:8000/api/Students")
     .then((response) => {
       Studenti.value = response.data
-      console.log(response.data);
+      //console.log(response.data);
     })
     .catch((err) => {
       console.log("Error ", err);
@@ -21,7 +22,13 @@ const DohvatiStudente = () => {
 const IzmeniStudenta = (arg)=>{
   console.log(arg, student.value);
   if(student.value){
-    axios.put(`http://94.156.189.137:8000/api/Employees/${student.value.employeeId}`,{'employeeId':student.value.employeeId, 'firstName':arg.firstName, 'lastName':arg.lastName})
+    let payload = student.value
+    payload.ime = arg.ime
+    payload.prezime = arg.prezime
+    payload.smer = arg.smer
+    payload.broj = arg.broj
+    console.log(payload);
+    axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`,payload)
   .then((response)=>{
     console.log(response);
     student.value = null
@@ -39,8 +46,9 @@ const Test = (arg) => {
 }
 
 const filtrirano = computed(() => {
+  let krit = kriterijum.value.toLowerCase()
   return Studenti.value.filter((s) => {
-    return s.firstName.toLowerCase().includes(kriterijum.value.toLowerCase()) || s.lastName.toLowerCase().includes(kriterijum.value.toLowerCase())
+    return s.ime.toLowerCase().includes(krit) || s.prezime.toLowerCase().includes(krit) || s.smer.toLowerCase().includes(krit) || s.godinaUpisa.toLowerCase().includes(krit)
   })
 })
 

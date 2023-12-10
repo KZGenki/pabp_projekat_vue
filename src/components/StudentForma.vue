@@ -5,14 +5,23 @@ const emits = defineEmits(["sacuvaj"])
 const data = ref()
 const ime = ref("")
 const prezime = ref("")
+const idStudenta = ref(-1)
+const smer = ref("")
+const broj = ref("")
 watch(data,()=>{
     if(data.value){
-        ime.value = data.value.firstName
-        prezime.value = data.value.lastName
+        ime.value = data.value.ime
+        prezime.value = data.value.prezime
+        idStudenta.value = data.value.idStudenta
+        smer.value = data.value.smer
+        broj.value = data.value.broj
     }
     else{
         ime.value=""
         prezime.value=""
+        smer.value=""
+        broj.value=""
+        idStudenta.value=-1
     }
 })
 onUpdated(()=>{
@@ -30,7 +39,15 @@ onUpdated(()=>{
             <td>Prezime: </td>
             <td><input type="text" v-model="prezime"></td>
         </tr>
-        <tr><td colspan="2"><button style="width:100%" @click="$emit('sacuvaj',{firstName:ime,lastName:prezime})">Sacuvaj</button></td></tr>
+        <tr>
+            <td>Smer: </td>
+            <td><input type="text" v-model="smer"></td>
+        </tr>
+        <tr>
+            <td>Broj: </td>
+            <td><input type="text" v-model="broj"></td>
+        </tr>
+        <tr><td colspan="2"><button style="width:100%" @click="$emit('sacuvaj',{idStudenta:idStudenta,ime:ime,prezime:prezime,smer:smer,broj:broj})">Sacuvaj</button></td></tr>
     </table>
 </template>
 <style scoped></style>
