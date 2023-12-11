@@ -127,10 +127,11 @@ const Predmeti = (student)=>{
   //console.log(student);
   studentPredmeti.value = student
 }
-
+console.log(filtrirano);
 </script>
 
 <template>
+  <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a>
   <StudentForma :student="student" @sacuvaj="IzmeniStudenta"></StudentForma>
   <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
   <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>

@@ -28,11 +28,6 @@ onUpdated(()=>{
 })
 const updateStudentPredmets = ()=>{
     predmeti.value = data.value.studentPredmets.filter((sp)=>{//this is broken
-        /* if(!(sp.idPredmeta in idZapisniks.value ) || !nepolozeni.value){
-            return true
-        }else{
-            return false
-        } */
         if(nepolozeni.value){
             if(sp.idPredmeta in idZapisniks.value){
                 if(idZapisniks.value[sp.idPredmeta]>5){
