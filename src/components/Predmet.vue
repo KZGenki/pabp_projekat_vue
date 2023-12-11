@@ -1,6 +1,5 @@
 <script setup>
 const props = defineProps(["predmet","ocena"])
-//console.log(props.predmet);
 </script>
 <template>
     <tr>

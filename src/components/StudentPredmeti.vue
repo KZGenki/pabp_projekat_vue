@@ -1,7 +1,7 @@
 <script setup>
 import Predmet from './Predmet.vue';
 import Student from './Student.vue';
-import { computed, onMounted, onUpdated, ref, watch } from 'vue';
+import { onUpdated, ref, watch } from 'vue';
 const props = defineProps(["student"])
 const idPolozeniPredmeti = ref({})
 const predmeti = ref([])
@@ -15,10 +15,6 @@ const data = ref({
     godinaUpisa:"",
     studentPredmets:[],
     zapisniks:[]
-})
-
-onMounted(()=>{
-
 })
 onUpdated(()=>{
     if(data.value != props.student){
@@ -42,9 +38,7 @@ watch(data,()=>{
     updateStudentPredmets()
 })
 watch(nepolozeni, ()=>{
-    console.log(nepolozeni);
     updateStudentPredmets()
-    console.log(predmeti.value);
 })
 
 </script>
