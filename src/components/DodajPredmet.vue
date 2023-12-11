@@ -7,11 +7,16 @@ const studentId = ref(-1)
 const studentPredmets = ref([])
 const predmeti = inject("predmeti")
 const dostupniPredmeti = ref([])
+const update = ref(false)
 
 onUpdated(()=>{
     if(studentId.value != props.student.idStudenta){
         studentId.value = props.student.idStudenta
         studentPredmets.value = props.student.studentPredmets
+    }
+    if(update.value){
+        studentPredmets.value = props.student.studentPredmets
+        update.value=false
     }
 })
 watch(studentId,()=>{
@@ -39,6 +44,6 @@ const idPredmeta = ref(0)
     <select name="" id="" v-model="idPredmeta">
         <option v-for="predmet in dostupniPredmeti" :value="predmet.idPredmeta">{{ predmet.naziv }}</option>
     </select>
-    <button @click="$emit('dodaj',idPredmeta, studentId)" :disabled="idPredmeta==0?true:false">Dodaj</button>
+    <button @click="()=>{emits('dodaj',idPredmeta, studentId); update=true}" :disabled="idPredmeta==0?true:false">Dodaj</button>
 </template>
 <style scoped></style>

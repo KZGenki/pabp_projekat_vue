@@ -14,11 +14,11 @@ const ispits = ref([])
 const kriterijum = ref("")
 const student = ref()
 let podaci = reactive({
-  students:false,
-  predmets:false,
-  zapisniks:false,
-  studentPredmets:false,
-  ispits:false
+  students: false,
+  predmets: false,
+  zapisniks: false,
+  studentPredmets: false,
+  ispits: false
 })
 
 const DohvatiStudents = () => {
@@ -33,9 +33,9 @@ const DohvatiStudents = () => {
       console.log("Error ", err);
     })
 }
-const IzmeniStudenta = (arg)=>{
+const IzmeniStudenta = (arg) => {
   console.log(arg, student.value);
-  if(student.value){
+  if (student.value) {
     let payload = student.value
     payload.ime = arg.ime
     payload.prezime = arg.prezime
@@ -44,27 +44,25 @@ const IzmeniStudenta = (arg)=>{
     payload.zapisniks = []
     payload.studentPredmets = []
     console.log(payload);
-    axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`,payload)
-  .then((response)=>{
-    state.value=0
-    console.log(response);
-    student.value = null
-    DohvatiStudents()
-  })
-  .catch((err)=>console.log(err))
+    axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`, payload)
+      .then((response) => {
+        state.value = 0
+        console.log(response);
+        student.value = null
+        DohvatiStudents()
+      })
+      .catch((err) => console.log(err))
   }
 }
-const DohvatiPredmets = ()=>{
-    podaci.predmets = false
-    axios.get('http://pabp.viser.edu.rs:8000/api/Predmets')
-    .then((response)=>{
-        predmets.value = response.data
-        podaci.predmets = true
-    }).catch(err=>alert(err))
+const DohvatiPredmets = () => {
+  podaci.predmets = false
+  axios.get('http://pabp.viser.edu.rs:8000/api/Predmets')
+    .then((response) => {
+      predmets.value = response.data
+      podaci.predmets = true
+    }).catch(err => alert(err))
 }
-const DodajPredmet = (predmetId, studentId)=>{
-  console.log("Predmet ID", predmetId, "Student ID", studentId);
-  console.log(studentPredmets.value)
+const DodajPredmet = (predmetId, studentId) => {
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
@@ -72,36 +70,43 @@ const DodajPredmet = (predmetId, studentId)=>{
     idPredmetaNavigation: null,
     idStudentaNavigation: null
   }
-  axios.post('http://pabp.viser.edu.rs:8000/api/StudentPredmets',payload)
-  .then((response)=>{
-    podaci.studentPredmets = false
-    DohvatiStudentPredmets()
-  }).catch(err=>alert(err))
+  axios.post('http://pabp.viser.edu.rs:8000/api/StudentPredmets', payload)
+    .then((response) => {
+      podaci.studentPredmets = false
+      DohvatiStudentPredmets()
+    }).catch(err => alert(err))
 
 }
-const DohvatiStudentPredmets = ()=>{
-    podaci.studentPredmets = false
-    axios.get('http://pabp.viser.edu.rs:8000/api/StudentPredmets')
+const UkloniPredmet = (predmetId, studentId) => {
+  axios.delete(`http://pabp.viser.edu.rs:8000/api/StudentPredmets/${studentId}/${predmetId}`)
     .then((response)=>{
-        studentPredmets.value = response.data
-        podaci.studentPredmets = true
-    }).catch(err=>alert(err))
+      podaci.studentPredmets = false
+      DohvatiStudentPredmets()
+  }).catch(err=>alert(err))
 }
-const DohvatiZapisniks = ()=>{
-    podaci.zapisniks = false
-    axios.get('http://pabp.viser.edu.rs:8000/api/Zapisniks')
-    .then((response)=>{
-        zapisniks.value = response.data
-        podaci.zapisniks = true
-    }).catch(err=>alert(err))
+const DohvatiStudentPredmets = () => {
+  podaci.studentPredmets = false
+  axios.get('http://pabp.viser.edu.rs:8000/api/StudentPredmets')
+    .then((response) => {
+      studentPredmets.value = response.data
+      podaci.studentPredmets = true
+    }).catch(err => alert(err))
 }
-const DohvatiIspits = ()=>{
-    podaci.ispits = false
-    axios.get('http://pabp.viser.edu.rs:8000/api/Ispits')
-    .then((response)=>{
-        ispits.value = response.data
-        podaci.ispits = true
-    }).catch(err=>alert(err))
+const DohvatiZapisniks = () => {
+  podaci.zapisniks = false
+  axios.get('http://pabp.viser.edu.rs:8000/api/Zapisniks')
+    .then((response) => {
+      zapisniks.value = response.data
+      podaci.zapisniks = true
+    }).catch(err => alert(err))
+}
+const DohvatiIspits = () => {
+  podaci.ispits = false
+  axios.get('http://pabp.viser.edu.rs:8000/api/Ispits')
+    .then((response) => {
+      ispits.value = response.data
+      podaci.ispits = true
+    }).catch(err => alert(err))
 }
 
 onMounted(() => {
@@ -111,18 +116,18 @@ onMounted(() => {
   DohvatiZapisniks()
   DohvatiIspits()
 })
-provide("predmeti",predmets)
-watch(podaci,()=>{
+provide("predmeti", predmets)
+watch(podaci, () => {
   //console.log(podaci);
-  if(podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits){
-    students.value.forEach((student)=> {
-      student.studentPredmets = studentPredmets.value.filter((sp)=>sp.idStudenta == student.idStudenta)
-      student.studentPredmets.forEach((studentPredmet)=>{
-        studentPredmet.idPredmetaNavigation = predmets.value.filter((p)=>p.idPredmeta == studentPredmet.idPredmeta)[0]
+  if (podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits) {
+    students.value.forEach((student) => {
+      student.studentPredmets = studentPredmets.value.filter((sp) => sp.idStudenta == student.idStudenta)
+      student.studentPredmets.forEach((studentPredmet) => {
+        studentPredmet.idPredmetaNavigation = predmets.value.filter((p) => p.idPredmeta == studentPredmet.idPredmeta)[0]
       })
-      student.zapisniks = zapisniks.value.filter((z)=>z.idStudenta == student.idStudenta)
-      student.zapisniks.forEach((zapisnik)=>{
-        zapisnik.idIspitaNavigation = ispits.value.filter((i)=>i.idIspita == zapisnik.idIspita)[0]
+      student.zapisniks = zapisniks.value.filter((z) => z.idStudenta == student.idStudenta)
+      student.zapisniks.forEach((zapisnik) => {
+        zapisnik.idIspitaNavigation = ispits.value.filter((i) => i.idIspita == zapisnik.idIspita)[0]
       })
     })
     //console.log(students.value);
@@ -142,24 +147,29 @@ const filtrirano = computed(() => {
 })
 
 const studentPredmeti = ref()
-const Predmeti = (student)=>{
+const Predmeti = (student) => {
   //console.log(student);
-  state.value=2
+  state.value = 2
   studentPredmeti.value = student
 }
 //console.log(filtrirano);
 const state = ref(0)
-const Nazad = ()=>{
+const Nazad = () => {
   state.value = 0
 }
 </script>
 
 <template>
   <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
-  <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
-  <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
-  <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
-  <StudentPredmeti :student="studentPredmeti" @nazad="Nazad" @dodaj_predmet="DodajPredmet"></StudentPredmeti>
+
+  <div>
+    <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
+    <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
+  </div>
+  <div>
+    <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
+    <StudentPredmeti :student="studentPredmeti" @nazad="Nazad" @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
+  </div>
 </template>
 
 <style scoped></style>

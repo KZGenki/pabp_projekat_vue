@@ -4,11 +4,12 @@ import Student from './Student.vue';
 import DodajPredmet from './DodajPredmet.vue';
 import { onUpdated, ref, watch, inject } from 'vue';
 const props = defineProps(["student"])
-const emits = defineEmits(["nazad","dodaj_predmet"])
+const emits = defineEmits(["nazad","dodaj_predmet","ukloni_predmet"])
 const idZapisniks = ref({})
 const predmeti = ref([]) 
 const predmets = inject("predmeti")
 const nepolozeni = ref(false)
+const update = ref(false)
 const data = ref({
     idStudenta:-1,
     ime:"",
@@ -20,14 +21,17 @@ const data = ref({
     zapisniks:[]
 })
 onUpdated(()=>{
-    console.log("zapisnici",props.student.zapisniks);
-    console.log("sp",props.student.studentPredmets);
     if(data.value != props.student){
         data.value = props.student
         idZapisniks.value = []
         data.value.zapisniks.forEach((zapisnik)=>{
             idZapisniks.value[zapisnik.idIspitaNavigation.idPredmeta] = zapisnik.ocena
         })
+    }
+    if(update.value){
+        console.log(update.value);
+        updateStudentPredmets()
+        update.value=false
     }
 })
 const updateStudentPredmets = ()=>{
@@ -51,12 +55,18 @@ watch(data,()=>{
 watch(nepolozeni, ()=>{
     updateStudentPredmets()
 })
+const ukloni = (predmetId, studentId)=>{
+    emits("ukloni_predmet", predmetId, studentId)
+    update.value=true
+    
 
+}
 </script>
 <template>
-    <button @click="$emit('nazad')">Nazad</button>
+    <div>
+        <button @click="$emit('nazad')">Nazad</button>
     <Student :student="data"></Student>
-    <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => emits('dodaj_predmet', predmetId, studentId)"></DodajPredmet>
+    <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId); update=true}"></DodajPredmet>
     <table>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
         <tr>
@@ -65,12 +75,13 @@ watch(nepolozeni, ()=>{
         </tr>
         <tr>
             <td style="vertical-align: top;">
-                <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation"></Predmet>
+                <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation" @ukloni="ukloni(studentPredmet.idPredmeta, studentPredmet.idStudenta)"></Predmet>
             </td>
             <td style="vertical-align: top;">
                 <Predmet v-for="zapisnik in data.zapisniks" :predmet="predmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta)" :ocena="zapisnik.ocena"></Predmet>            
             </td>
         </tr>
     </table>
+    </div>
 </template>
 <style scoped></style>

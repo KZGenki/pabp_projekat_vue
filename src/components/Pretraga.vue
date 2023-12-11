@@ -7,6 +7,8 @@ watch(kriterijum, () => {
 })
 </script>
 <template>
-    <input type="text" v-model="kriterijum" placeholder="Pretraga">
+    <div>
+        <input type="text" v-model="kriterijum" placeholder="Pretraga">
+    </div>
 </template>
 <style scoped></style>
