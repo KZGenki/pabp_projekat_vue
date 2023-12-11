@@ -2,7 +2,9 @@
 import Predmet from './Predmet.vue';
 import { computed, onMounted, onUpdated, ref, watch } from 'vue';
 const props = defineProps(["student"])
-const polozeniPredmeti = ref([])
+const idPolozeniPredmeti = ref({})
+const predmeti = ref([])
+const nepolozeni = ref(false)
 const data = ref({
     idStudenta:-1,
     ime:"",
@@ -18,30 +20,30 @@ onMounted(()=>{
 
 })
 onUpdated(()=>{
-    data.value = props.student
-    polozeniPredmeti.value = []
-    data.value.zapisniks.forEach((zapisnik)=>{
-        polozeniPredmeti.value.push(zapisnik.idIspitaNavigation.idPredmeta)
-    })
-    //console.log(data);
+    if(data.value != props.student){
+        data.value = props.student
+        idPolozeniPredmeti.value = []
+        data.value.zapisniks.forEach((zapisnik)=>{
+            idPolozeniPredmeti.value[zapisnik.idIspitaNavigation.idPredmeta] = 1
+        })
+    }
 })
-watch(data,()=>{
-
-})
-
-const predmeti = computed(()=>{
-    if(data.value.idStudenta == -1){
-        return []
-    }else{
-        console.log(2, data);
-        return data.value.studentPredmets.filter((sp)=>{
-        if(sp.idPredmeta in polozeniPredmeti.value){
+const updateStudentPredmets = ()=>{
+    predmeti.value = data.value.studentPredmets.filter((sp)=>{//this is broken
+        if(!(sp.idPredmeta in idPolozeniPredmeti.value) || !nepolozeni.value){
             return true
         }else{
             return false
         }
     })
-    }
+}
+watch(data,()=>{
+    updateStudentPredmets()
+})
+watch(nepolozeni, ()=>{
+    console.log(nepolozeni);
+    updateStudentPredmets()
+    console.log(predmeti.value);
 })
 
 </script>
@@ -61,16 +63,20 @@ const predmeti = computed(()=>{
             <td>{{ data.smer }}-{{ data.broj }}/{{ data.godinaUpisa }}</td>
         </tr>
         <tr>
-            <td>Prijavljeni predmeti</td>
+            <td>Prijavljeni predmeti <input type="checkbox" name="" id="" v-model="nepolozeni">{{ nepolozeni }}</td>
             <td>
                 <!-- {{ data.studentPredmets[0] }} -->
-                <Predmet v-for="studentPredmet in data.studentPredmets" :predmet="studentPredmet.idPredmetaNavigation"></Predmet>
+                <!-- <Predmet v-for="studentPredmet in data.studentPredmets" :predmet="studentPredmet.idPredmetaNavigation"></Predmet> -->
+                <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation"></Predmet>
             </td>
         </tr>
         <tr>
             <td>Polozeni predmeti</td>
             <td>
-                {{ data.zapisniks[0] }}
+                <tr v-for="zapisnik in data.zapisniks">
+                    <td> {{ data.studentPredmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta).idPredmetaNavigation.naziv }}</td>
+                    <td> {{ zapisnik.ocena }}</td>
+                </tr>
             </td>
         </tr>
     </table>
