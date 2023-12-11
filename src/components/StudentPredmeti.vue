@@ -1,5 +1,6 @@
 <script setup>
 import Predmet from './Predmet.vue';
+import Student from './Student.vue';
 import { computed, onMounted, onUpdated, ref, watch } from 'vue';
 const props = defineProps(["student"])
 const idPolozeniPredmeti = ref({})
@@ -48,35 +49,18 @@ watch(nepolozeni, ()=>{
 
 </script>
 <template>
-    Student
+    <Student :student="data"></Student>
     <table>
         <tr>
-            <td>Ime</td>
-            <td>{{ data.ime }}</td>
-        </tr>
-        <tr>
-            <td>Prezime</td>
-            <td>{{ data.prezime }}</td>
-        </tr>
-        <tr>
-            <td>Indeks</td>
-            <td>{{ data.smer }}-{{ data.broj }}/{{ data.godinaUpisa }}</td>
-        </tr>
-        <tr>
             <td>Prijavljeni predmeti <input type="checkbox" name="" id="" v-model="nepolozeni">{{ nepolozeni }}</td>
-            <td>
-                <!-- {{ data.studentPredmets[0] }} -->
-                <!-- <Predmet v-for="studentPredmet in data.studentPredmets" :predmet="studentPredmet.idPredmetaNavigation"></Predmet> -->
+            <td>Polozeni predmeti</td>  
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">
                 <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation"></Predmet>
             </td>
-        </tr>
-        <tr>
-            <td>Polozeni predmeti</td>
-            <td>
-                <tr v-for="zapisnik in data.zapisniks">
-                    <td> {{ data.studentPredmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta).idPredmetaNavigation.naziv }}</td>
-                    <td> {{ zapisnik.ocena }}</td>
-                </tr>
+            <td style="vertical-align: top;">
+                <Predmet v-for="zapisnik in data.zapisniks" :predmet="data.studentPredmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta).idPredmetaNavigation" :ocena="zapisnik.ocena"></Predmet>            
             </td>
         </tr>
     </table>
