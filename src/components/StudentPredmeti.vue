@@ -45,9 +45,10 @@ watch(nepolozeni, ()=>{
 <template>
     <Student :student="data"></Student>
     <table>
+        <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
         <tr>
-            <td>Prijavljeni predmeti <input type="checkbox" name="" id="" v-model="nepolozeni">{{ nepolozeni }}</td>
-            <td>Polozeni predmeti</td>  
+            <td>Prijavljeni predmeti</td>
+            <td>Zapisnici</td>  
         </tr>
         <tr>
             <td style="vertical-align: top;">
