@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, provide, reactive, ref, watch } from 'vue';
 import TabelaStudenata from './components/TabelaStudenata.vue';
 import Pretraga from './components/Pretraga.vue';
 import StudentForma from './components/StudentForma.vue';
@@ -93,6 +93,7 @@ onMounted(() => {
   DohvatiZapisniks()
   DohvatiIspits()
 })
+provide("predmeti",predmets)
 watch(podaci,()=>{
   //console.log(podaci);
   if(podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits){

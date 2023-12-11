@@ -1,9 +1,10 @@
 <script setup>
 import Predmet from './Predmet.vue';
 import Student from './Student.vue';
+import DodajPredmet from './DodajPredmet.vue';
 import { onUpdated, ref, watch } from 'vue';
 const props = defineProps(["student"])
-const idPolozeniPredmeti = ref({})
+const idZapisniks = ref({})
 const predmeti = ref([])
 const nepolozeni = ref(false)
 const data = ref({
@@ -19,18 +20,29 @@ const data = ref({
 onUpdated(()=>{
     if(data.value != props.student){
         data.value = props.student
-        idPolozeniPredmeti.value = []
+        idZapisniks.value = []
         data.value.zapisniks.forEach((zapisnik)=>{
-            idPolozeniPredmeti.value[zapisnik.idIspitaNavigation.idPredmeta] = 1
+            idZapisniks.value[zapisnik.idIspitaNavigation.idPredmeta] = zapisnik.ocena
         })
     }
 })
 const updateStudentPredmets = ()=>{
     predmeti.value = data.value.studentPredmets.filter((sp)=>{//this is broken
-        if(!(sp.idPredmeta in idPolozeniPredmeti.value) || !nepolozeni.value){
+        /* if(!(sp.idPredmeta in idZapisniks.value ) || !nepolozeni.value){
             return true
         }else{
             return false
+        } */
+        if(nepolozeni.value){
+            if(sp.idPredmeta in idZapisniks.value){
+                if(idZapisniks.value[sp.idPredmeta]>5){
+                    return false
+                }
+            }
+            return true
+        }
+        else{
+            return true
         }
     })
 }
@@ -44,6 +56,7 @@ watch(nepolozeni, ()=>{
 </script>
 <template>
     <Student :student="data"></Student>
+    <DodajPredmet :student="data"></DodajPredmet>
     <table>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
         <tr>

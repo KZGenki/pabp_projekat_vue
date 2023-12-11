@@ -30,7 +30,8 @@ onUpdated(()=>{
 })
 </script>
 <template>
-    <table>
+    <div>
+        <table>
         <tr>
             <td>Ime: </td>
             <td><input type="text" v-model="ime"></td>
@@ -49,5 +50,6 @@ onUpdated(()=>{
         </tr>
         <tr><td colspan="2"><button style="width:100%" @click="$emit('sacuvaj',{idStudenta:idStudenta,ime:ime,prezime:prezime,smer:smer,broj:broj})">Sacuvaj</button></td></tr>
     </table>
+    </div>
 </template>
 <style scoped></style>

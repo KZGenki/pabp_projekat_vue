@@ -4,17 +4,22 @@ let p = ref(0)
 const props = defineProps(["student"])
 const prosek = computed(()=>{
     p.value = 0
+    let count = 0
     if(props.student.zapisniks.length>0){
         props.student.zapisniks.forEach(zapisnik => {
-            p.value+=zapisnik.ocena
+            if(zapisnik.ocena>5){
+                p.value+=zapisnik.ocena
+                count++
+            }
         });
-        p.value = p.value/props.student.zapisniks.length
+        p.value = p.value/count
     }
     return p 
 })
 </script>
 <template>
-    <table>
+    <div>
+        <table>
         <h2>Student</h2>
         <tr>
             <td>Ime</td>
@@ -33,5 +38,6 @@ const prosek = computed(()=>{
             <td>{{ parseFloat(prosek.value).toFixed(2) }}</td>
         </tr>
     </table>
+    </div>
 </template>
 <style scoped></style>

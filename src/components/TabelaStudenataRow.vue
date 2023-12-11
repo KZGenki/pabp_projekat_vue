@@ -6,13 +6,15 @@ const emits = defineEmits(["izmeni","predmeti"])
 const p = ref(0)
 const prosek = computed(()=>{
     p.value = 0
+    let count = 0
     if(props.data.zapisniks.length>0){
-        console.log("prosek");
         props.data.zapisniks.forEach(zapisnik => {
-            p.value+=zapisnik.ocena
+            if(zapisnik.ocena>5){
+                p.value+=zapisnik.ocena
+                count++
+            }
         });
-        console.log("suma ocena", p.value);
-        p.value = p.value/props.data.zapisniks.length
+        p.value = p.value/count
     }
     return p 
 })
