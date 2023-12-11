@@ -1,3 +1,6 @@
+# pabp_projekat_vue
+Prvi projekat iz predmeta Programiranje aplikacija baza podataka (vue.js)
+
 # pabp_projekat_rin322
 
 This template should help get you started developing with Vue 3 in Vite.
