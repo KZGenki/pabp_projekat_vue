@@ -68,7 +68,7 @@ const DodajPredmet = (predmetId, studentId)=>{
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
-    skolskaGodina: "2022/2023",
+    skolskaGodina: "2022/23",
     idPredmetaNavigation: null,
     idStudentaNavigation: null
   }
