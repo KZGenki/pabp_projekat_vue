@@ -46,6 +46,7 @@ const IzmeniStudenta = (arg)=>{
     console.log(payload);
     axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`,payload)
   .then((response)=>{
+    state.value=0
     console.log(response);
     student.value = null
     DohvatiStudents()
@@ -60,6 +61,23 @@ const DohvatiPredmets = ()=>{
         predmets.value = response.data
         podaci.predmets = true
     }).catch(err=>alert(err))
+}
+const DodajPredmet = (predmetId, studentId)=>{
+  console.log("Predmet ID", predmetId, "Student ID", studentId);
+  console.log(studentPredmets.value)
+  let payload = {
+    idPredmeta: predmetId,
+    idStudenta: studentId,
+    skolskaGodina: "2022/2023",
+    idPredmetaNavigation: null,
+    idStudentaNavigation: null
+  }
+  axios.post('http://pabp.viser.edu.rs:8000/api/StudentPredmets',payload)
+  .then((response)=>{
+    podaci.studentPredmets = false
+    DohvatiStudentPredmets()
+  }).catch(err=>alert(err))
+
 }
 const DohvatiStudentPredmets = ()=>{
     podaci.studentPredmets = false
@@ -112,7 +130,8 @@ watch(podaci,()=>{
 })
 const Izmeni = (arg) => {
   student.value = arg
-  //console.log(arg);
+  state.value = 1
+  console.log(arg);
 }
 
 const filtrirano = computed(() => {
@@ -125,17 +144,22 @@ const filtrirano = computed(() => {
 const studentPredmeti = ref()
 const Predmeti = (student)=>{
   //console.log(student);
+  state.value=2
   studentPredmeti.value = student
 }
-console.log(filtrirano);
+//console.log(filtrirano);
+const state = ref(0)
+const Nazad = ()=>{
+  state.value = 0
+}
 </script>
 
 <template>
-  <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a>
-  <StudentForma :student="student" @sacuvaj="IzmeniStudenta"></StudentForma>
+  <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
+  <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
   <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
   <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
-  <StudentPredmeti :student="studentPredmeti"></StudentPredmeti>
+  <StudentPredmeti :student="studentPredmeti" @nazad="Nazad" @dodaj_predmet="DodajPredmet"></StudentPredmeti>
 </template>
 
 <style scoped></style>

@@ -2,6 +2,7 @@
 import { ref, computed, inject, onUpdated, watch } from 'vue';
 
 const props = defineProps(["student"])
+const emits = defineEmits(["dodaj"])
 const studentId = ref(-1)
 const studentPredmets = ref([])
 const predmeti = inject("predmeti")
@@ -15,14 +16,6 @@ onUpdated(()=>{
 })
 watch(studentId,()=>{
     dostupniPredmeti.value = []
-    /* predmeti.value.forEach(predmet => {
-        if(studentPredmets.value.find((sp)=>{
-            sp.idPredmeta == predmet.idPredmeta
-        })){
-        }else{
-            p.value.push(predmet)
-        }
-    }); */
     for (const predmet of predmeti.value) {       
         let found = false
         for (const sp of studentPredmets.value) {
@@ -40,11 +33,12 @@ watch(studentId,()=>{
 const idPredmeta = ref(0)
 </script>
 <template>
-    Izaberi predmet 
+    Dodaj novi predmet <br>
      <!-- {{ dostupniPredmeti }}  -->
-    <p v-for="predmet in dostupniPredmeti">{{ predmet.naziv }}</p>
-    <!-- <select name="" id="" v-model="idPredmeta">
-        <option v-for="predmet in dostupniPredmeti" :value="predmet['idPredmeta']">{{ predmet.naziv }}</option>
-    </select> -->
+    <!-- <p v-for="predmet in dostupniPredmeti">{{ predmet.naziv }}</p> -->
+    <select name="" id="" v-model="idPredmeta">
+        <option v-for="predmet in dostupniPredmeti" :value="predmet.idPredmeta">{{ predmet.naziv }}</option>
+    </select>
+    <button @click="$emit('dodaj',idPredmeta, studentId)" :disabled="idPredmeta==0?true:false">Dodaj</button>
 </template>
 <style scoped></style>

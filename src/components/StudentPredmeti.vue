@@ -2,10 +2,12 @@
 import Predmet from './Predmet.vue';
 import Student from './Student.vue';
 import DodajPredmet from './DodajPredmet.vue';
-import { onUpdated, ref, watch } from 'vue';
+import { onUpdated, ref, watch, inject } from 'vue';
 const props = defineProps(["student"])
+const emits = defineEmits(["nazad","dodaj_predmet"])
 const idZapisniks = ref({})
-const predmeti = ref([])
+const predmeti = ref([]) 
+const predmets = inject("predmeti")
 const nepolozeni = ref(false)
 const data = ref({
     idStudenta:-1,
@@ -18,6 +20,8 @@ const data = ref({
     zapisniks:[]
 })
 onUpdated(()=>{
+    console.log("zapisnici",props.student.zapisniks);
+    console.log("sp",props.student.studentPredmets);
     if(data.value != props.student){
         data.value = props.student
         idZapisniks.value = []
@@ -27,7 +31,7 @@ onUpdated(()=>{
     }
 })
 const updateStudentPredmets = ()=>{
-    predmeti.value = data.value.studentPredmets.filter((sp)=>{//this is broken
+    predmeti.value = data.value.studentPredmets.filter((sp)=>{
         if(nepolozeni.value){
             if(sp.idPredmeta in idZapisniks.value){
                 if(idZapisniks.value[sp.idPredmeta]>5){
@@ -50,8 +54,9 @@ watch(nepolozeni, ()=>{
 
 </script>
 <template>
+    <button @click="$emit('nazad')">Nazad</button>
     <Student :student="data"></Student>
-    <DodajPredmet :student="data"></DodajPredmet>
+    <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => emits('dodaj_predmet', predmetId, studentId)"></DodajPredmet>
     <table>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
         <tr>
@@ -63,7 +68,7 @@ watch(nepolozeni, ()=>{
                 <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation"></Predmet>
             </td>
             <td style="vertical-align: top;">
-                <Predmet v-for="zapisnik in data.zapisniks" :predmet="data.studentPredmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta).idPredmetaNavigation" :ocena="zapisnik.ocena"></Predmet>            
+                <Predmet v-for="zapisnik in data.zapisniks" :predmet="predmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta)" :ocena="zapisnik.ocena"></Predmet>            
             </td>
         </tr>
     </table>

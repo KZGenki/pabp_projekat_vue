@@ -1,7 +1,7 @@
 <script setup>
 import { onUpdated, ref, watch } from 'vue';
 const props = defineProps(["student"])
-const emits = defineEmits(["sacuvaj"])
+const emits = defineEmits(["sacuvaj","nazad"])
 const data = ref()
 const ime = ref("")
 const prezime = ref("")
@@ -25,12 +25,12 @@ watch(data,()=>{
     }
 })
 onUpdated(()=>{
-    data.value = props.student
-
+        data.value = props.student
 })
 </script>
 <template>
     <div>
+        <button @click="$emit('nazad')">Nazad</button>
         <table>
         <tr>
             <td>Ime: </td>

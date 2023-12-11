@@ -11,6 +11,7 @@ const emits = defineEmits(["izmeni", "predmeti"])
                 <th>Ime</th>
                 <th>Prezime</th>
                 <th>Broj indeksa</th>
+                <th>Prosek</th>
                 <th>Actions</th>
             </thead>
             <tbody>
