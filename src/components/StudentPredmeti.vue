@@ -10,6 +10,7 @@ const predmeti = ref([])
 const predmets = inject("predmeti")
 const nepolozeni = ref(false)
 const update = ref(false)
+const clicked = ref(false)
 const data = ref({
     idStudenta:-1,
     ime:"",
@@ -21,7 +22,8 @@ const data = ref({
     zapisniks:[]
 })
 onUpdated(()=>{
-    if(data.value != props.student){
+    if(data.value != props.student || clicked.value){
+        clicked.value=false
         data.value = props.student
         idZapisniks.value = []
         data.value.zapisniks.forEach((zapisnik)=>{
@@ -56,28 +58,29 @@ watch(nepolozeni, ()=>{
     updateStudentPredmets()
 })
 const ukloni = (predmetId, studentId)=>{
+    clicked.value=true
     emits("ukloni_predmet", predmetId, studentId)
     update.value=true
-    
-
 }
+const showZapisniks = ref(false)
 </script>
 <template>
     <div>
-        <button @click="$emit('nazad')">Nazad</button>
+        <!-- <knob @click="$emit('nazad')">Nazad</knob> -->
     <Student :student="data"></Student>
     <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId); update=true}"></DodajPredmet>
     <table>
+        <label for="zapisnici">Prikazi zapisnike</label><input type="checkbox" id="zapisnici" v-model="showZapisniks"><br>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
         <tr>
             <td>Prijavljeni predmeti</td>
-            <td>Zapisnici</td>  
+            <td v-if="showZapisniks">Zapisnici</td>  
         </tr>
         <tr>
             <td style="vertical-align: top;">
                 <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation" @ukloni="ukloni(studentPredmet.idPredmeta, studentPredmet.idStudenta)"></Predmet>
             </td>
-            <td style="vertical-align: top;">
+            <td style="vertical-align: top;" v-if="showZapisniks">
                 <Predmet v-for="zapisnik in data.zapisniks" :predmet="predmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta)" :ocena="zapisnik.ocena"></Predmet>            
             </td>
         </tr>

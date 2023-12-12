@@ -8,15 +8,14 @@ const emits = defineEmits(["click"])
 <style scoped>
 .GET{
     background-color: lightgreen;
-    
 }
 .POST{
     background-color: lightblue;
 }
 .PUT{
-    background-color: lightyellow;
+    background-color: lightsalmon;
 }
 .DELETE{
-    background-color: lightsalmon;
+    background-color: lightcoral;
 }
 </style>

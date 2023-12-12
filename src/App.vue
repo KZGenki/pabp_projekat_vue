@@ -4,6 +4,7 @@ import TabelaStudenata from './components/TabelaStudenata.vue';
 import Pretraga from './components/Pretraga.vue';
 import StudentForma from './components/StudentForma.vue';
 import StudentPredmeti from './components/StudentPredmeti.vue';
+import Poruke from './components/Poruke.vue';
 import axios from 'axios'
 
 const students = ref([])
@@ -13,6 +14,7 @@ const zapisniks = ref([])
 const ispits = ref([])
 const kriterijum = ref("")
 const student = ref()
+const Poruka = ref({msg:'',type:'failed'})
 let podaci = reactive({
   students: false,
   predmets: false,
@@ -51,7 +53,7 @@ const IzmeniStudenta = (arg) => {
         student.value = null
         DohvatiStudents()
       })
-      .catch((err) => console.log(err))
+      .catch(err => {Poruka.value={msg:err,type:"failed"}})
   }
 }
 const DohvatiPredmets = () => {
@@ -74,7 +76,9 @@ const DodajPredmet = (predmetId, studentId) => {
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
-    }).catch(err => alert(err))
+      Poruka.value={msg:"Predmet dodat",type:"success"}
+
+    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
 
 }
 const UkloniPredmet = (predmetId, studentId) => {
@@ -90,7 +94,7 @@ const DohvatiStudentPredmets = () => {
     .then((response) => {
       studentPredmets.value = response.data
       podaci.studentPredmets = true
-    }).catch(err => alert(err))
+    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
@@ -98,7 +102,7 @@ const DohvatiZapisniks = () => {
     .then((response) => {
       zapisniks.value = response.data
       podaci.zapisniks = true
-    }).catch(err => alert(err))
+    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
 }
 const DohvatiIspits = () => {
   podaci.ispits = false
@@ -106,7 +110,7 @@ const DohvatiIspits = () => {
     .then((response) => {
       ispits.value = response.data
       podaci.ispits = true
-    }).catch(err => alert(err))
+    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
 }
 
 onMounted(() => {
@@ -131,6 +135,8 @@ watch(podaci, () => {
       })
     })
     //console.log(students.value);
+    Poruka.value={msg:"Ucitani podaci",type:"success"}
+
   }
 })
 const Izmeni = (arg) => {
@@ -151,6 +157,7 @@ const Predmeti = (student) => {
   //console.log(student);
   state.value = 2
   studentPredmeti.value = student
+  Poruka.value.msg=`Ucitan student ${student.ime} ${student.prezime}`
 }
 //console.log(filtrirano);
 const state = ref(0)
@@ -170,6 +177,7 @@ const Nazad = () => {
     <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
     <StudentPredmeti :student="studentPredmeti" @nazad="Nazad" @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
   </div>
+  <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>
 
 <style scoped></style>
