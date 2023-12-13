@@ -68,6 +68,7 @@ const DohvatiPredmets = () => {
     }).catch(err => alert(err))
 }
 const DodajPredmet = (predmetId, studentId) => {
+  console.log("predmetid, studentid",predmetId, studentId);
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
@@ -138,7 +139,7 @@ watch(podaci, () => {
         zapisnik.idIspitaNavigation = ispits.value.filter((i) => i.idIspita == zapisnik.idIspita)[0]
       })
     })
-    console.log(studentPredmeti);
+    //console.log(studentPredmeti);
     if(spopened.value){
       studentPredmeti.value = students.value.find((s)=>s.idStudenta==studentPredmeti.value.idStudenta)
     }
@@ -183,7 +184,7 @@ const Nazad = () => {
   </div>
   <div>
     <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
-    <StudentPredmeti :student="studentPredmeti" @nazad="Nazad" @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
+    <StudentPredmeti v-if="state==2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad" @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>

@@ -6,10 +6,9 @@ const emits = defineEmits(["dodaj"])
 const studentId = ref(-1)
 const studentPredmets = ref([])
 const predmeti = inject("predmeti")
-const dostupniPredmeti = ref([])
 const update = ref(false)
 
-onUpdated(()=>{
+/* onUpdated(()=>{
     if(studentId.value != props.student.idStudenta){
         studentId.value = props.student.idStudenta
         studentPredmets.value = props.student.studentPredmets
@@ -18,8 +17,8 @@ onUpdated(()=>{
         studentPredmets.value = props.student.studentPredmets
         update.value=false
     }
-})
-const updatePredmets = ()=>{
+}) */
+/* const updatePredmets = ()=>{
     dostupniPredmeti.value = []
     for (const predmet of predmeti.value) {       
         let found = false
@@ -34,20 +33,26 @@ const updatePredmets = ()=>{
             dostupniPredmeti.value.push(predmet)
         }     
     }
-}
-watch(studentId, updatePredmets)
+} */
+/* watch(studentId, updatePredmets)
 watch(update, ()=>{
     updatePredmets()
+}) */
+const dostupniPredmeti = computed(()=>{
+    console.log("dostupniPredmeti");
+    return predmeti.value.filter((predmet)=>{
+        return props.student.studentPredmets.find((p)=>{return p.idPredmeta == predmet.idPredmeta}) === undefined
+    })
 })
-const idPredmeta = ref(0)
+const idPredmeta = ref(-1)
 </script>
 <template>
     Dodaj novi predmet <br>
      <!-- {{ dostupniPredmeti }}  -->
-    <!-- <p v-for="predmet in dostupniPredmeti">{{ predmet.naziv }}</p> -->
+    <!-- <p v-for="predmet in dostupniPredmeti">{{ predmet.naziv }} {{ predmet.idPredmeta }}</p> -->
     <select name="" id="" v-model="idPredmeta">
         <option v-for="predmet in dostupniPredmeti" :value="predmet.idPredmeta">{{ predmet.naziv }}</option>
     </select>
-    <knob @click="()=>{emits('dodaj',idPredmeta, studentId); update=!update}" :disabled="idPredmeta==0?true:false" :boja="'POST'">Dodaj</knob>
+    <knob @click="()=>{emits('dodaj',idPredmeta, props.student.idStudenta);}" :disabled="idPredmeta==-1?true:false" :boja="'POST'">Dodaj</knob>
 </template>
 <style scoped></style>
