@@ -37,7 +37,6 @@ const DohvatiStudents = () => {
     .catch(err => {  Notify( err, "failed") })
 }
 const IzmeniStudenta = (arg) => {
-  console.log(arg, student.value);
   if(arg.ime.length==0 || arg.prezime.length==0 || arg.smer.length==0 || arg.broj.length==0){
       Notify( "Polje za unos ne sme biti prazno", "failed")
       return
@@ -160,7 +159,7 @@ const Izmeni = (arg) => {
 const Predmeti = (student) => {
   state.value = 2
   studentPredmeti.value = student
-  Poruka.value.msg = `Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`
+  Notify( `Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`, "success")
 }
 
 const Nazad = () => {

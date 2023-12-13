@@ -62,6 +62,12 @@ const showZapisniks = ref(false)
                 <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation" @ukloni="ukloni(studentPredmet.idPredmeta, studentPredmet.idStudenta)"></Predmet>
             </td>
             <td style="vertical-align: top;" v-if="showZapisniks">
+                <tr>
+                    <th>Naziv predmeta</th>
+                    <th>ESPB</th>
+                    <th>Status</th>
+                    <th>Ocena</th>
+                </tr>
                 <Predmet v-for="zapisnik in props.student.zapisniks" :predmet="predmets.find((sp)=>sp.idPredmeta == zapisnik.idIspitaNavigation.idPredmeta)" :ocena="zapisnik.ocena"></Predmet>            
             </td>
         </tr>
