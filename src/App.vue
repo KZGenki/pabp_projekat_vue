@@ -16,8 +16,42 @@ const kriterijum = ref("")
 const student = ref()
 const studentPredmeti = ref()
 const state = ref(0)
+const messages = {
+  default:{
+    msg:"",
+    type:"default"
+  },
+  data_loaded:{
+    msg:"Podaci ucitani",
+    type:"success"
+  },
+  student_changes_saved:{
+    msg:"Uspesno snimljene izmene",
+    type:"success"
+  },
+  student_loaded:{
+    msg:"Ucitan student ",
+    type:"success"
+  },
+  empty_field_not_allowed:{
+    msg:"Polje za unos ne sme biti prazno",
+    type:"failed"
+  },
+  error:{
+    msg:"Greska: ",
+    type:"failed"
+  },
+  subject_added:{
+    msg:"Predmet uspesno dodat",
+    type:"success"
+  },
+  subject_removed:{
+    msg:"Predmet uspesno sklonjen",
+    type:"success"
+  }
+}
 
-const Poruka = ref({ msg: '', type: 'failed'})
+const Poruka = ref(messages.default)
 let podaci = reactive({
   students: false,
   predmets: false,
@@ -34,11 +68,12 @@ const DohvatiStudents = () => {
       podaci.students = true
       //console.log(response.data);
     })
-    .catch(err => {  Notify( err, "failed") })
+    .catch(err => {  Notify( messages.error, err) })
 }
 const IzmeniStudenta = (arg) => {
   if(arg.ime.length==0 || arg.prezime.length==0 || arg.smer.length==0 || arg.broj.length==0){
-      Notify( "Polje za unos ne sme biti prazno", "failed")
+      //Notify( "Polje za unos ne sme biti prazno", "failed")
+      Notify(messages.empty_field_not_allowed)
       return
     }
   if (student.value) {
@@ -54,9 +89,9 @@ const IzmeniStudenta = (arg) => {
         state.value = 0
         student.value = null
         DohvatiStudents()
-        Notify( "Uspesno snimljene izmene", "success")
+        Notify(messages.student_changes_saved)
       })
-      .catch(err => {  Notify( err, "failed") })
+      .catch(err => {  Notify( messages.error, err) })
   }
 }
 const DohvatiPredmets = () => {
@@ -65,7 +100,7 @@ const DohvatiPredmets = () => {
     .then((response) => {
       predmets.value = response.data
       podaci.predmets = true
-    }).catch(err => {  Notify( err, "failed")})
+    }).catch(err => {  Notify( messages.error, err)})
 }
 const DodajPredmet = (predmetId, studentId) => {
   let payload = {
@@ -79,10 +114,10 @@ const DodajPredmet = (predmetId, studentId) => {
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
-      Notify( "Predmet dodat", "success")
+      Notify(messages.subject_added)
 
 
-    }).catch(err => {  Notify( err, "failed") })
+    }).catch(err => {  Notify( messages.error, err) })
 
 }
 const UkloniPredmet = (predmetId, studentId) => {
@@ -90,7 +125,7 @@ const UkloniPredmet = (predmetId, studentId) => {
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
-      Poruka.value={ msg: "Uspesno sklonjen predmet sa liste", type: "success" }
+      Notify(messages.subject_removed)
     }).catch(err => {  Notify( err, "failed") })
 }
 const DohvatiStudentPredmets = () => {
@@ -99,7 +134,7 @@ const DohvatiStudentPredmets = () => {
     .then((response) => {
       studentPredmets.value = response.data
       podaci.studentPredmets = true
-    }).catch(err => {  Notify( err, "failed") })
+    }).catch(err => {  Notify( messages.error, err) })
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
@@ -107,7 +142,7 @@ const DohvatiZapisniks = () => {
     .then((response) => {
       zapisniks.value = response.data
       podaci.zapisniks = true
-    }).catch(err => {  Notify( err, "failed") })
+    }).catch(err => {  Notify( messages.error, err) })
 }
 const DohvatiIspits = () => {
   podaci.ispits = false
@@ -115,7 +150,7 @@ const DohvatiIspits = () => {
     .then((response) => {
       ispits.value = response.data
       podaci.ispits = true
-    }).catch(err => { Notify( err, "failed") })
+    }).catch(err => { Notify( messages.error, err) })
 }
 
 onMounted(() => {
@@ -127,7 +162,6 @@ onMounted(() => {
 })
 provide("predmeti", predmets)
 watch(podaci, () => {
-  //console.log(podaci);
   if (podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits) {
     students.value.forEach((student) => {
       student.studentPredmets = studentPredmets.value.filter((sp) => sp.idStudenta == student.idStudenta)
@@ -139,8 +173,6 @@ watch(podaci, () => {
         zapisnik.idIspitaNavigation = ispits.value.filter((i) => i.idIspita == zapisnik.idIspita)[0]
       })
     })
-    //Poruka.value = { msg: "Ucitani podaci", type: "success" }
-
   }
 })
 
@@ -159,16 +191,16 @@ const Izmeni = (arg) => {
 const Predmeti = (student) => {
   state.value = 2
   studentPredmeti.value = student
-  Notify( `Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`, "success")
+  Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`)
 }
 
 const Nazad = () => {
   state.value = 0
 }
 
-const Notify = (arg, typ)=>{
-  Poruka.value = { msg: -1, type: typ }
-  setTimeout(()=>{Poruka.value = { msg: arg, type: typ }},100)
+const Notify = (message, arg=null)=>{
+  Poruka.value = messages.default
+  setTimeout(()=>{Poruka.value = arg==null?message:{msg:message.msg +" " + arg, type:message.type}},100)
 }
 
 </script>
