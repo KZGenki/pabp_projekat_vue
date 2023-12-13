@@ -5,6 +5,8 @@ const emits = defineEmits(["ukloni"])
 <template>
     <tr :class="props.ocena==5?'nepolozeno':''">
         <td>{{ props.predmet.naziv }}</td>
+        <td>{{ props.predmet.espb }}</td>
+        <td>{{ props.predmet.status }}</td>
         <td v-if="props.ocena">{{ props.ocena }}</td>
         <td v-else><knob @click="$emit('ukloni')" :boja="'DELETE'">Ukloni</knob></td>
     </tr>

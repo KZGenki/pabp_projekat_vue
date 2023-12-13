@@ -15,9 +15,9 @@ const ispits = ref([])
 const kriterijum = ref("")
 const student = ref()
 const studentPredmeti = ref()
-const spopened = ref(false)
+const state = ref(0)
 
-const Poruka = ref({msg:'',type:'failed'})
+const Poruka = ref({ msg: '', type: 'failed'})
 let podaci = reactive({
   students: false,
   predmets: false,
@@ -34,12 +34,14 @@ const DohvatiStudents = () => {
       podaci.students = true
       //console.log(response.data);
     })
-    .catch((err) => {
-      console.log("Error ", err);
-    })
+    .catch(err => {  Notify( err, "failed") })
 }
 const IzmeniStudenta = (arg) => {
   console.log(arg, student.value);
+  if(arg.ime.length==0 || arg.prezime.length==0 || arg.smer.length==0 || arg.broj.length==0){
+      Notify( "Polje za unos ne sme biti prazno", "failed")
+      return
+    }
   if (student.value) {
     let payload = student.value
     payload.ime = arg.ime
@@ -48,15 +50,14 @@ const IzmeniStudenta = (arg) => {
     payload.broj = arg.broj
     payload.zapisniks = []
     payload.studentPredmets = []
-    console.log(payload);
     axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`, payload)
       .then((response) => {
         state.value = 0
-        console.log(response);
         student.value = null
         DohvatiStudents()
+        Notify( "Uspesno snimljene izmene", "success")
       })
-      .catch(err => {Poruka.value={msg:err,type:"failed"}})
+      .catch(err => {  Notify( err, "failed") })
   }
 }
 const DohvatiPredmets = () => {
@@ -65,10 +66,9 @@ const DohvatiPredmets = () => {
     .then((response) => {
       predmets.value = response.data
       podaci.predmets = true
-    }).catch(err => alert(err))
+    }).catch(err => {  Notify( err, "failed")})
 }
 const DodajPredmet = (predmetId, studentId) => {
-  console.log("predmetid, studentid",predmetId, studentId);
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
@@ -80,18 +80,19 @@ const DodajPredmet = (predmetId, studentId) => {
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
-      Poruka.value={msg:"Predmet dodat",type:"success"}
+      Notify( "Predmet dodat", "success")
 
 
-    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
+    }).catch(err => {  Notify( err, "failed") })
 
 }
 const UkloniPredmet = (predmetId, studentId) => {
   axios.delete(`http://pabp.viser.edu.rs:8000/api/StudentPredmets/${studentId}/${predmetId}`)
-    .then((response)=>{
+    .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
-  }).catch(err=>alert(err))
+      Poruka.value={ msg: "Uspesno sklonjen predmet sa liste", type: "success" }
+    }).catch(err => {  Notify( err, "failed") })
 }
 const DohvatiStudentPredmets = () => {
   podaci.studentPredmets = false
@@ -99,7 +100,7 @@ const DohvatiStudentPredmets = () => {
     .then((response) => {
       studentPredmets.value = response.data
       podaci.studentPredmets = true
-    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
+    }).catch(err => {  Notify( err, "failed") })
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
@@ -107,7 +108,7 @@ const DohvatiZapisniks = () => {
     .then((response) => {
       zapisniks.value = response.data
       podaci.zapisniks = true
-    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
+    }).catch(err => {  Notify( err, "failed") })
 }
 const DohvatiIspits = () => {
   podaci.ispits = false
@@ -115,7 +116,7 @@ const DohvatiIspits = () => {
     .then((response) => {
       ispits.value = response.data
       podaci.ispits = true
-    }).catch(err => {Poruka.value={msg:err,type:"failed"}})
+    }).catch(err => { Notify( err, "failed") })
 }
 
 onMounted(() => {
@@ -139,19 +140,10 @@ watch(podaci, () => {
         zapisnik.idIspitaNavigation = ispits.value.filter((i) => i.idIspita == zapisnik.idIspita)[0]
       })
     })
-    //console.log(studentPredmeti);
-    if(spopened.value){
-      studentPredmeti.value = students.value.find((s)=>s.idStudenta==studentPredmeti.value.idStudenta)
-    }
-    Poruka.value={msg:"Ucitani podaci",type:"success"}
+    //Poruka.value = { msg: "Ucitani podaci", type: "success" }
 
   }
 })
-const Izmeni = (arg) => {
-  student.value = arg
-  state.value = 1
-  console.log(arg);
-}
 
 const filtrirano = computed(() => {
   let krit = kriterijum.value.toLowerCase()
@@ -160,31 +152,39 @@ const filtrirano = computed(() => {
   })
 })
 
+const Izmeni = (arg) => {
+  student.value = arg
+  state.value = 1
+}
 
 const Predmeti = (student) => {
-  //console.log(student);
   state.value = 2
-  spopened.value=true
   studentPredmeti.value = student
-  Poruka.value.msg=`Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`
+  Poruka.value.msg = `Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`
 }
-//console.log(filtrirano);
-const state = ref(0)
+
 const Nazad = () => {
   state.value = 0
 }
+
+const Notify = (arg, typ)=>{
+  Poruka.value = { msg: -1, type: typ }
+  setTimeout(()=>{Poruka.value = { msg: arg, type: typ }},100)
+}
+
 </script>
 
 <template>
-  <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
+  <div>
+    <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
 
-  <div>
-    <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
-    <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
-  </div>
-  <div>
-    <StudentForma :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
-    <StudentPredmeti v-if="state==2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad" @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
+    <div v-if="state == 0">
+      <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
+      <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
+    </div>
+    <StudentForma v-if="state == 1" :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
+    <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad" @dodaj_predmet="DodajPredmet"
+      @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>

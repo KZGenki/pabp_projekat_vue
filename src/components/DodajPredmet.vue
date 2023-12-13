@@ -8,38 +8,7 @@ const studentPredmets = ref([])
 const predmeti = inject("predmeti")
 const update = ref(false)
 
-/* onUpdated(()=>{
-    if(studentId.value != props.student.idStudenta){
-        studentId.value = props.student.idStudenta
-        studentPredmets.value = props.student.studentPredmets
-    }
-    if(update.value){
-        studentPredmets.value = props.student.studentPredmets
-        update.value=false
-    }
-}) */
-/* const updatePredmets = ()=>{
-    dostupniPredmeti.value = []
-    for (const predmet of predmeti.value) {       
-        let found = false
-        for (const sp of studentPredmets.value) {
-
-            if(predmet.idPredmeta == sp.idPredmeta){
-                found = true
-                break
-            }
-        }
-        if(!found){
-            dostupniPredmeti.value.push(predmet)
-        }     
-    }
-} */
-/* watch(studentId, updatePredmets)
-watch(update, ()=>{
-    updatePredmets()
-}) */
 const dostupniPredmeti = computed(()=>{
-    console.log("dostupniPredmeti");
     return predmeti.value.filter((predmet)=>{
         return props.student.studentPredmets.find((p)=>{return p.idPredmeta == predmet.idPredmeta}) === undefined
     })

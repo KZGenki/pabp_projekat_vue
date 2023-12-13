@@ -1,36 +1,18 @@
 <script setup>
-import { onUpdated, ref, watch } from 'vue';
+import { ref } from 'vue';
 const props = defineProps(["student"])
 const emits = defineEmits(["sacuvaj","nazad"])
 const data = ref()
-const ime = ref("")
-const prezime = ref("")
-const idStudenta = ref(-1)
-const smer = ref("")
-const broj = ref("")
-watch(data,()=>{
-    if(data.value){
-        ime.value = data.value.ime
-        prezime.value = data.value.prezime
-        idStudenta.value = data.value.idStudenta
-        smer.value = data.value.smer
-        broj.value = data.value.broj
-    }
-    else{
-        ime.value=""
-        prezime.value=""
-        smer.value=""
-        broj.value=""
-        idStudenta.value=-1
-    }
-})
-onUpdated(()=>{
-        data.value = props.student
-})
+const ime = ref(props.student.ime)
+const prezime = ref(props.student.prezime)
+const idStudenta = ref(props.student.idStudenta)
+const smer = ref(props.student.smer)
+const broj = ref(props.student.broj)
+
 </script>
 <template>
     <div>
-        <!-- <knob @click="$emit('nazad')">Nazad</knob> -->
+        <knob @click="$emit('nazad')">Nazad</knob>
         <table>
         <tr>
             <td>Ime: </td>
