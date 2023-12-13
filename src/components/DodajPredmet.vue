@@ -19,7 +19,7 @@ onUpdated(()=>{
         update.value=false
     }
 })
-watch(studentId,()=>{
+const updatePredmets = ()=>{
     dostupniPredmeti.value = []
     for (const predmet of predmeti.value) {       
         let found = false
@@ -34,6 +34,10 @@ watch(studentId,()=>{
             dostupniPredmeti.value.push(predmet)
         }     
     }
+}
+watch(studentId, updatePredmets)
+watch(update, ()=>{
+    updatePredmets()
 })
 const idPredmeta = ref(0)
 </script>
@@ -44,6 +48,6 @@ const idPredmeta = ref(0)
     <select name="" id="" v-model="idPredmeta">
         <option v-for="predmet in dostupniPredmeti" :value="predmet.idPredmeta">{{ predmet.naziv }}</option>
     </select>
-    <knob @click="()=>{emits('dodaj',idPredmeta, studentId); update=true}" :disabled="idPredmeta==0?true:false" :boja="'POST'">Dodaj</knob>
+    <knob @click="()=>{emits('dodaj',idPredmeta, studentId); update=!update}" :disabled="idPredmeta==0?true:false" :boja="'POST'">Dodaj</knob>
 </template>
 <style scoped></style>

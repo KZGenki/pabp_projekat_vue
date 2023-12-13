@@ -14,6 +14,9 @@ const zapisniks = ref([])
 const ispits = ref([])
 const kriterijum = ref("")
 const student = ref()
+const studentPredmeti = ref()
+const spopened = ref(false)
+
 const Poruka = ref({msg:'',type:'failed'})
 let podaci = reactive({
   students: false,
@@ -78,6 +81,7 @@ const DodajPredmet = (predmetId, studentId) => {
       DohvatiStudentPredmets()
       Poruka.value={msg:"Predmet dodat",type:"success"}
 
+
     }).catch(err => {Poruka.value={msg:err,type:"failed"}})
 
 }
@@ -134,7 +138,10 @@ watch(podaci, () => {
         zapisnik.idIspitaNavigation = ispits.value.filter((i) => i.idIspita == zapisnik.idIspita)[0]
       })
     })
-    //console.log(students.value);
+    console.log(studentPredmeti);
+    if(spopened.value){
+      studentPredmeti.value = students.value.find((s)=>s.idStudenta==studentPredmeti.value.idStudenta)
+    }
     Poruka.value={msg:"Ucitani podaci",type:"success"}
 
   }
@@ -152,12 +159,13 @@ const filtrirano = computed(() => {
   })
 })
 
-const studentPredmeti = ref()
+
 const Predmeti = (student) => {
   //console.log(student);
   state.value = 2
+  spopened.value=true
   studentPredmeti.value = student
-  Poruka.value.msg=`Ucitan student ${student.ime} ${student.prezime}`
+  Poruka.value.msg=`Ucitan student ${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`
 }
 //console.log(filtrirano);
 const state = ref(0)

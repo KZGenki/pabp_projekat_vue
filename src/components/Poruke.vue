@@ -3,12 +3,28 @@ import { onUpdated, ref, watch } from 'vue';
 
 const props = defineProps(["poruka","type"])
 const Poruka = ref(props.poruka)
-const visibility = ref(50)
+const visibility = ref(0) // try 0.0 - 1.0
+let h
+let s
 const show = ()=>{
-    visibility.value=100
+    s = setInterval(()=>{
+        if(visibility.value<1.0){
+            visibility.value+=0.05
+        }else{
+            clearInterval(s)
+        }
+    },1)
+    //visibility.value=0.5
 }
 const hide = ()=>{
-    visibility.value=0
+    h = setInterval(()=>{
+        if(visibility.value>0.0){
+            visibility.value-=0.01
+        }else{
+            clearInterval(h)
+        }
+    },5)
+    //visibility.value=0
 }
 onUpdated(()=>{
     if(Poruka.value!=props.poruka){
@@ -16,9 +32,10 @@ onUpdated(()=>{
     }
 })
 watch(Poruka,()=>{
-    console.log("watch poruke",visibility);
+    clearInterval(s)
+    clearInterval(h)
     show()
-    setTimeout(hide,5000)
+    setTimeout(hide,3000)
 })
 
 </script>

@@ -10,7 +10,7 @@ const predmeti = ref([])
 const predmets = inject("predmeti")
 const nepolozeni = ref(false)
 const update = ref(false)
-const clicked = ref(false)
+const count = ref(0)
 const data = ref({
     idStudenta:-1,
     ime:"",
@@ -22,21 +22,18 @@ const data = ref({
     zapisniks:[]
 })
 onUpdated(()=>{
-    if(data.value != props.student || clicked.value){
-        clicked.value=false
+    if(data.value != props.student){
+        
         data.value = props.student
         idZapisniks.value = []
         data.value.zapisniks.forEach((zapisnik)=>{
             idZapisniks.value[zapisnik.idIspitaNavigation.idPredmeta] = zapisnik.ocena
         })
     }
-    if(update.value){
-        console.log(update.value);
-        updateStudentPredmets()
-        update.value=false
-    }
 })
 const updateStudentPredmets = ()=>{
+    console.log("updateStudentPredmets");
+    data.value = props.student
     predmeti.value = data.value.studentPredmets.filter((sp)=>{
         if(nepolozeni.value){
             if(sp.idPredmeta in idZapisniks.value){
@@ -57,8 +54,12 @@ watch(data,()=>{
 watch(nepolozeni, ()=>{
     updateStudentPredmets()
 })
+watch(update, ()=>{
+    if(update.value=true){
+        updateStudentPredmets()
+    }
+})
 const ukloni = (predmetId, studentId)=>{
-    clicked.value=true
     emits("ukloni_predmet", predmetId, studentId)
     update.value=true
 }
@@ -68,7 +69,7 @@ const showZapisniks = ref(false)
     <div>
         <!-- <knob @click="$emit('nazad')">Nazad</knob> -->
     <Student :student="data"></Student>
-    <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId); update=true}"></DodajPredmet>
+    <DodajPredmet :student="data" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId); update=true;}"></DodajPredmet>
     <table>
         <label for="zapisnici">Prikazi zapisnike</label><input type="checkbox" id="zapisnici" v-model="showZapisniks"><br>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
