@@ -73,7 +73,7 @@ watch(Poruka, ()=>{
 }
 .show{
     animation-name: show;
-    animation-duration: 1s;
+    animation-duration:0.2s;
     opacity:1;
 }
 .hide{
