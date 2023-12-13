@@ -36,14 +36,19 @@ watch(Poruka, () => {
 onUpdated(() => {
     if (Poruka.value != props.poruka) {
         Poruka.value = props.poruka
+        if (Poruka.value != "") {
+            clearTimeout()
+            classes.value = props.type + " show"
+            setTimeout(() => { classes.value = props.type + " hide" }, 5000)
+        }
     }
 })
-watch(Poruka, ()=>{
-    if (Poruka.value != ""){
+/* watch(Poruka, () => {
+    if (Poruka.value != "") {
         classes.value = props.type + " show"
-        setTimeout(()=>{classes.value = props.type + " hide"},5000)
+        setTimeout(() => { classes.value = props.type + " hide" }, 5000)
     }
-})
+}) */
 
 </script>
 <template>
@@ -55,14 +60,26 @@ watch(Poruka, ()=>{
     </div> -->
 </template>
 <style scoped>
-@keyframes hide{
-    from {opacity:1;}
-    to {opacity:0;}
+@keyframes hide {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
 }
-@keyframes show{
-    from {opacity: 0;}
-    to {opacity:1;}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
+
 #message {
     position: fixed;
     bottom: 0%;
@@ -71,15 +88,17 @@ watch(Poruka, ()=>{
     padding: 0 20px;
     text-align: center;
 }
-.show{
+
+.show {
     animation-name: show;
-    animation-duration:0.2s;
-    opacity:1;
+    animation-duration: 0.2s;
+    opacity: 1;
 }
-.hide{
+
+.hide {
     animation-name: hide;
     animation-duration: 3s;
-    opacity:0;
+    opacity: 0;
 }
 
 .success {
@@ -91,8 +110,8 @@ watch(Poruka, ()=>{
     background-color: lightcoral;
     color: black
 }
-.default{
+
+.default {
     background-color: transparent;
     color: transparent
-}
-</style>
+}</style>
