@@ -7,6 +7,9 @@ import StudentPredmeti from './components/StudentPredmeti.vue';
 import Poruke from './components/Poruke.vue';
 import axios from 'axios'
 
+const viser_baza="http://pabp.viser.edu.rs:8000"
+const local_baza="http://localhost:5086"
+
 const students = ref([])
 const predmets = ref([])
 const studentPredmets = ref([])
@@ -62,7 +65,7 @@ let podaci = reactive({
 
 const DohvatiStudents = () => {
   podaci.students = false
-  axios.get("http://pabp.viser.edu.rs:8000/api/Students")
+  axios.get(local_baza+"/api/Students")
     .then((response) => {
       students.value = response.data
       podaci.students = true

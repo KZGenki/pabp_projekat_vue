@@ -23,7 +23,8 @@ const prosek = computed(()=>{
     <tr>
         <td>{{ props.data.ime }}</td>
         <td>{{ props.data.prezime }}</td>
-        <td>{{ props.data.smer }}-{{ props.data.broj }}/{{ props.data.godinaUpisa }}</td>
+        <!-- <td>{{ props.data.smer }}-{{ props.data.broj }}/{{ props.data.godinaUpisa }}</td> -->
+        <td>{{ props.data.brojIndeksa }}</td>
         <td>{{ parseFloat(prosek.value).toFixed(2) }}</td>
         <td>
             <knob @click="emits('izmeni', props.data)" :boja="'PUT'">Izmeni</knob>
