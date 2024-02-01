@@ -9,6 +9,7 @@ import axios from 'axios'
 
 const viser_baza="http://pabp.viser.edu.rs:8000"
 const local_baza="http://localhost:5086"
+const url = local_baza
 
 const students = ref([])
 const predmets = ref([])
@@ -65,7 +66,7 @@ let podaci = reactive({
 
 const DohvatiStudents = () => {
   podaci.students = false
-  axios.get(local_baza+"/api/Students")
+  axios.get(url+"/api/Students")
     .then((response) => {
       students.value = response.data
       podaci.students = true
@@ -74,20 +75,30 @@ const DohvatiStudents = () => {
     .catch(err => {  Notify( messages.error, err) })
 }
 const IzmeniStudenta = (arg) => {
-  if(arg.ime.length==0 || arg.prezime.length==0 || arg.smer.length==0 || arg.broj.length==0){
+  if(arg.ime.length==0 || arg.prezime.length==0 ){
       //Notify( "Polje za unos ne sme biti prazno", "failed")
       Notify(messages.empty_field_not_allowed)
       return
     }
   if (student.value) {
-    let payload = student.value
-    payload.ime = arg.ime
-    payload.prezime = arg.prezime
-    payload.smer = arg.smer
-    payload.broj = arg.broj
-    payload.zapisniks = []
-    payload.studentPredmets = []
-    axios.put(`http://pabp.viser.edu.rs:8000/api/Students/${arg.idStudenta}`, payload)
+    // let payload = student.value
+    // console.log(student.value)
+    // console.log(arg)
+    // payload.ime = arg.ime
+    // payload.prezime = arg.prezime
+    let payload = {
+      idStudenta : student.value.idStudenta,
+      ime: arg.ime,
+      prezime: arg.prezime,
+      broj: 0,
+      smer: "1",
+      godinaUpisa:"1"
+    }
+   
+    //payload.zapisniks = []
+    //payload.studentPredmets = []
+    console.log(payload)
+    axios.put(url+`/api/Students/${arg.idStudenta}`, payload)
       .then((response) => {
         state.value = 0
         student.value = null

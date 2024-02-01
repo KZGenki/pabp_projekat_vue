@@ -2,21 +2,23 @@
 import { ref, computed } from 'vue';
 
 const props = defineProps(["data"])
-const emits = defineEmits(["izmeni","predmeti"])
+const emits = defineEmits(["izmeni", "predmeti"])
 const p = ref(0)
-const prosek = computed(()=>{
+const prosek = computed(() => {
     p.value = 0
     let count = 0
-    if(props.data.zapisniks.length>0){
-        props.data.zapisniks.forEach(zapisnik => {
-            if(zapisnik.ocena>5){
-                p.value+=zapisnik.ocena
-                count++
-            }
-        });
-        p.value = p.value/count
+    if (props.data.zapisniks) {
+        if (props.data.zapisniks.length > 0) {
+            props.data.zapisniks.forEach(zapisnik => {
+                if (zapisnik.ocena > 5) {
+                    p.value += zapisnik.ocena
+                    count++
+                }
+            });
+            p.value = p.value / count
+        }
     }
-    return p 
+    return p
 })
 </script>
 <template>
@@ -33,7 +35,7 @@ const prosek = computed(()=>{
     </tr>
 </template>
 <style scoped>
-tr:hover{
+tr:hover {
     background-color: yellow;
     color: black
 }
