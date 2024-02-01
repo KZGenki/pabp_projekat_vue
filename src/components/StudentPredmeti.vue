@@ -8,6 +8,8 @@ const emits = defineEmits(["nazad","dodaj_predmet","ukloni_predmet"])
 /* const idZapisniks = ref({}) */
 /* const predmeti = ref([])  */
 const predmets = inject("predmeti")
+const predmetiStudenta = inject("predmetiStudenta")
+const predmetiStudentaNepolozeni = inject("predmetiStudentaNepolozeni")
 const nepolozeni = ref(false)
 
 const idZapisniks = computed(()=>{
@@ -43,7 +45,7 @@ const showZapisniks = ref(false)
     <div>
         <knob @click="$emit('nazad')">Nazad</knob>
     <Student :student="props.student"></Student>
-    <DodajPredmet :student="props.student" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId)}"></DodajPredmet>
+    <DodajPredmet :student="props.student" :slusa="predmetiStudenta" @dodaj="(predmetId, studentId) => {emits('dodaj_predmet', predmetId, studentId)}"></DodajPredmet>
     <table>
         <label for="zapisnici">Prikazi zapisnike</label><input type="checkbox" id="zapisnici" v-model="showZapisniks"><br>
         <label for="nepolozeni">Prikazi samo nepolozene</label><input type="checkbox" id="nepolozeni" v-model="nepolozeni">
@@ -59,7 +61,7 @@ const showZapisniks = ref(false)
                     <th>Status</th>
                     <th>Akcije</th>
                 </tr>
-                <Predmet v-for="studentPredmet in predmeti" :predmet="studentPredmet.idPredmetaNavigation" @ukloni="ukloni(studentPredmet.idPredmeta, studentPredmet.idStudenta)"></Predmet>
+                <Predmet v-for="studentPredmet in predmetiStudenta" :predmet="studentPredmet" @ukloni="ukloni(studentPredmet.idPredmeta, props.student.idStudenta)"></Predmet>
             </td>
             <td style="vertical-align: top;" v-if="showZapisniks">
                 <tr>

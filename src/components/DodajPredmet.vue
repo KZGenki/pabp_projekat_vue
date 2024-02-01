@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, inject, onUpdated, watch } from 'vue';
 
-const props = defineProps(["student"])
+const props = defineProps(["student","slusa"])
 const emits = defineEmits(["dodaj"])
 const studentId = ref(-1)
 const studentPredmets = ref([])
@@ -10,7 +10,7 @@ const update = ref(false)
 
 const dostupniPredmeti = computed(()=>{
     return predmeti.value.filter((predmet)=>{
-        return props.student.studentPredmets.find((p)=>{return p.idPredmeta == predmet.idPredmeta}) === undefined
+        return props.slusa.find((p)=>{return p.idPredmeta == predmet.idPredmeta}) === undefined
     })
 })
 const idPredmeta = ref(-1)

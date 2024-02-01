@@ -13,6 +13,8 @@ const url = local_baza
 
 const students = ref([])
 const predmets = ref([])
+const predmetsStudenta = ref([])
+const predmetsStudentaNepolozeni = ref([])
 const studentPredmets = ref([])
 const zapisniks = ref([])
 const ispits = ref([])
@@ -121,25 +123,47 @@ const PretraziStudente = (kriterijum) => {
     DohvatiStudents()
   }
 }
+// const DohvatiPredmets = () => {
+//   podaci.predmets = false
+//   axios.get('http://pabp.viser.edu.rs:8000/api/Predmets')
+//     .then((response) => {
+//       predmets.value = response.data
+//       podaci.predmets = true
+//     }).catch(err => { Notify(messages.error, err) })
+// }
 const DohvatiPredmets = () => {
   podaci.predmets = false
-  axios.get('http://pabp.viser.edu.rs:8000/api/Predmets')
+  axios.get(url+`/api/StudentPredmets/predmeti`)
     .then((response) => {
+      console.log(response.data)
       predmets.value = response.data
       podaci.predmets = true
     }).catch(err => { Notify(messages.error, err) })
 }
+
+const DohvatiPredmetsStudenta = (id)=>{
+  axios.get(url+`/api/StudentPredmets/${id}`)
+    .then((response) => {
+      predmetsStudenta.value = response.data
+    }).catch(err => { Notify(messages.error, err) })
+}
+const DohvatiPredmetsStudentaPolozeni =  (id)=>{
+  axios.get(url+`/api/StudentPredmets/nepolozeni/${id}`)
+    .then((response) => {
+      predmetsStudentaNepolozeni.value = response.data
+    }).catch(err => { Notify(messages.error, err) })
+}
+
 const DodajPredmet = (predmetId, studentId) => {
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
-    skolskaGodina: "2022/23",
-    idPredmetaNavigation: null,
-    idStudentaNavigation: null
+    skolskaGodina: "2022/23"
   }
-  axios.post('http://pabp.viser.edu.rs:8000/api/StudentPredmets', payload)
+  axios.post(url+'/api/StudentPredmets', payload)
     .then((response) => {
       podaci.studentPredmets = false
+      DohvatiPredmetsStudenta(studentId)
       DohvatiStudentPredmets()
       Notify(messages.subject_added)
 
@@ -148,12 +172,13 @@ const DodajPredmet = (predmetId, studentId) => {
 
 }
 const UkloniPredmet = (predmetId, studentId) => {
-  axios.delete(`http://pabp.viser.edu.rs:8000/api/StudentPredmets/${studentId}/${predmetId}`)
+  axios.delete(url+`/api/StudentPredmets/${studentId}/${predmetId}`)
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
+      DohvatiPredmetsStudenta(studentId)
       Notify(messages.subject_removed)
-    }).catch(err => { Notify(err, "failed") })
+    }).catch(err => { Notify(messages.error, err.response.data); console.log(err) })
 }
 const DohvatiStudentPredmets = () => {
   podaci.studentPredmets = false
@@ -161,7 +186,7 @@ const DohvatiStudentPredmets = () => {
     .then((response) => {
       studentPredmets.value = response.data
       podaci.studentPredmets = true
-    }).catch(err => { Notify(messages.error, err) })
+    }).catch(err => { Notify(messages.error, err)})
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
@@ -188,6 +213,8 @@ onMounted(() => {
   DohvatiIspits()
 })
 provide("predmeti", predmets)
+provide("predmetiStudenta", predmetsStudenta)
+provide("predmetiStudentaNepolozeni", predmetsStudentaNepolozeni)
 watch(podaci, () => {
   if (podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits) {
     students.value.forEach((student) => {
@@ -217,9 +244,12 @@ const Izmeni = (arg) => {
 }
 
 const Predmeti = (student) => {
+  DohvatiPredmetsStudenta(student.idStudenta)
+  DohvatiPredmetsStudentaPolozeni(student.idStudenta)
   state.value = 2
   studentPredmeti.value = student
-  Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`)
+  //Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`)
+  Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.brojIndeksa}`)
 }
 
 const Nazad = () => {

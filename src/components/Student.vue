@@ -31,7 +31,7 @@ const prosek = computed(()=>{
         </tr>
         <tr>
             <td>Indeks</td>
-            <td>{{ props.student.smer }}-{{ props.student.broj }}/{{ props.student.godinaUpisa }}</td>
+            <td>{{ props.student.brojIndeksa }}</td>
         </tr>
         <tr>
             <td>Prosek</td>
