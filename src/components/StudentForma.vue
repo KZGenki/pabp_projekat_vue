@@ -6,8 +6,9 @@ const data = ref()
 const ime = ref(props.student.ime)
 const prezime = ref(props.student.prezime)
 const idStudenta = ref(props.student.idStudenta)
-const smer = ref(props.student.smer)
-const broj = ref(props.student.broj)
+//const smer = ref(props.student.smer)
+//const broj = ref(props.student.broj)
+const indeks = ref(props.student.brojIndeksa)
 
 </script>
 <template>
@@ -22,13 +23,17 @@ const broj = ref(props.student.broj)
             <td>Prezime: </td>
             <td><input type="text" v-model="prezime"></td>
         </tr>
-        <tr>
+        <!-- <tr>
             <td>Smer: </td>
             <td><input type="text" v-model="smer"></td>
         </tr>
         <tr>
             <td>Broj: </td>
             <td><input type="text" v-model="broj"></td>
+        </tr> -->
+        <tr>
+            <td>Indeks: </td>
+            <td><input type="text" v-model="indeks" disabled></td>
         </tr>
         <tr><td colspan="2"><knob style="width:100%" @click="$emit('sacuvaj',{idStudenta:idStudenta,ime:ime,prezime:prezime,smer:smer,broj:broj})" :boja="'PUT'">Sacuvaj</knob></td></tr>
     </table>
