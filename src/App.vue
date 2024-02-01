@@ -15,6 +15,7 @@ const students = ref([])
 const predmets = ref([])
 const predmetsStudenta = ref([])
 const predmetsStudentaNepolozeni = ref([])
+const predmetsStudentaPolozeni = ref([])
 const studentPredmets = ref([])
 const zapisniks = ref([])
 const ispits = ref([])
@@ -140,14 +141,19 @@ const DohvatiPredmets = () => {
       podaci.predmets = true
     }).catch(err => { Notify(messages.error, err) })
 }
-
+const DohvatiPredmetsStudentaPolozeni = (id)=>{
+  axios.get(url+`/api/Zapisniks/Polozeni/${id}`)
+    .then((response) => {
+      predmetsStudentaPolozeni.value = response.data
+    }).catch(err => { Notify(messages.error, err) })
+}
 const DohvatiPredmetsStudenta = (id)=>{
   axios.get(url+`/api/StudentPredmets/${id}`)
     .then((response) => {
       predmetsStudenta.value = response.data
     }).catch(err => { Notify(messages.error, err) })
 }
-const DohvatiPredmetsStudentaPolozeni =  (id)=>{
+const DohvatiPredmetsStudentaNepolozeni =  (id)=>{
   axios.get(url+`/api/StudentPredmets/nepolozeni/${id}`)
     .then((response) => {
       predmetsStudentaNepolozeni.value = response.data
@@ -164,6 +170,8 @@ const DodajPredmet = (predmetId, studentId) => {
     .then((response) => {
       podaci.studentPredmets = false
       DohvatiPredmetsStudenta(studentId)
+      DohvatiPredmetsStudentaPolozeni(studentId)
+      DohvatiPredmetsStudentaNepolozeni(studentId)
       DohvatiStudentPredmets()
       Notify(messages.subject_added)
 
@@ -177,6 +185,8 @@ const UkloniPredmet = (predmetId, studentId) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
       DohvatiPredmetsStudenta(studentId)
+      DohvatiPredmetsStudentaPolozeni(studentId)
+      DohvatiPredmetsStudentaNepolozeni(studentId)
       Notify(messages.subject_removed)
     }).catch(err => { Notify(messages.error, err.response.data); console.log(err) })
 }
@@ -215,6 +225,7 @@ onMounted(() => {
 provide("predmeti", predmets)
 provide("predmetiStudenta", predmetsStudenta)
 provide("predmetiStudentaNepolozeni", predmetsStudentaNepolozeni)
+provide("predmetiStudentaPolozeni", predmetsStudentaPolozeni)
 watch(podaci, () => {
   if (podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits) {
     students.value.forEach((student) => {
@@ -246,6 +257,7 @@ const Izmeni = (arg) => {
 const Predmeti = (student) => {
   DohvatiPredmetsStudenta(student.idStudenta)
   DohvatiPredmetsStudentaPolozeni(student.idStudenta)
+  DohvatiPredmetsStudentaNepolozeni(student.idStudenta)
   state.value = 2
   studentPredmeti.value = student
   //Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`)
@@ -265,7 +277,7 @@ const Notify = (message, arg = null) => {
 
 <template>
   <div>
-    <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
+    <a :href="url+'/swagger/index.html'" target="_blank">API</a><br>
 
     <div v-if="state == 0">
       <Pretraga @pretraga="arg => PretraziStudente(arg)"></Pretraga>

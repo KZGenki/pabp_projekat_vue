@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 let p = ref(0)
-const props = defineProps(["student"])
+const props = defineProps(["student","ocena"])
 const prosek = computed(()=>{
     p.value = 0
     let count = 0
@@ -35,7 +35,7 @@ const prosek = computed(()=>{
         </tr>
         <tr>
             <td>Prosek</td>
-            <td>{{ parseFloat(prosek.value).toFixed(2) }}</td>
+            <td>{{ props.ocena }}</td>
         </tr>
     </table>
     </div>

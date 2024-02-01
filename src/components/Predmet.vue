@@ -1,6 +1,6 @@
 <script setup>
-const props = defineProps(["predmet","ocena"])
-const emits = defineEmits(["ukloni"])
+const props = defineProps(["predmet","ocena","prijava"])
+const emits = defineEmits(["ukloni","prijavi"])
 </script>
 <template>
     <tr :class="props.ocena==5?'nepolozeno':''">
@@ -8,7 +8,8 @@ const emits = defineEmits(["ukloni"])
         <td>{{ props.predmet.espb }}</td>
         <td>{{ props.predmet.status }}</td>
         <td v-if="props.ocena">{{ props.ocena }}</td>
-        <td v-else><knob @click="$emit('ukloni')" :boja="'DELETE'">Ukloni</knob></td>
+        <td v-if="props.prijava"><knob @click="$emit('prijavi')" :boja="'POST'">Prijavi</knob></td>
+        <td v-if="!props.ocena && !props.prijava"><knob @click="$emit('ukloni')" :boja="'DELETE'">Ukloni</knob></td>
     </tr>
 </template>
 <style scoped>
