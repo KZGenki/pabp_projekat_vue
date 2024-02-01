@@ -7,8 +7,8 @@ import StudentPredmeti from './components/StudentPredmeti.vue';
 import Poruke from './components/Poruke.vue';
 import axios from 'axios'
 
-const viser_baza="http://pabp.viser.edu.rs:8000"
-const local_baza="http://localhost:5086"
+const viser_baza = "http://pabp.viser.edu.rs:8000"
+const local_baza = "http://localhost:5086"
 const url = local_baza
 
 const students = ref([])
@@ -21,37 +21,37 @@ const student = ref()
 const studentPredmeti = ref()
 const state = ref(0)
 const messages = {
-  default:{
-    msg:"",
-    type:"default"
+  default: {
+    msg: "",
+    type: "default"
   },
-  data_loaded:{
-    msg:"Podaci ucitani",
-    type:"success"
+  data_loaded: {
+    msg: "Podaci ucitani",
+    type: "success"
   },
-  student_changes_saved:{
-    msg:"Uspesno snimljene izmene",
-    type:"success"
+  student_changes_saved: {
+    msg: "Uspesno snimljene izmene",
+    type: "success"
   },
-  student_loaded:{
-    msg:"Ucitan student ",
-    type:"success"
+  student_loaded: {
+    msg: "Ucitan student ",
+    type: "success"
   },
-  empty_field_not_allowed:{
-    msg:"Polje za unos ne sme biti prazno",
-    type:"failed"
+  empty_field_not_allowed: {
+    msg: "Polje za unos ne sme biti prazno",
+    type: "failed"
   },
-  error:{
-    msg:"Greska: ",
-    type:"failed"
+  error: {
+    msg: "Greska: ",
+    type: "failed"
   },
-  subject_added:{
-    msg:"Predmet uspesno dodat",
-    type:"success"
+  subject_added: {
+    msg: "Predmet uspesno dodat",
+    type: "success"
   },
-  subject_removed:{
-    msg:"Predmet uspesno sklonjen",
-    type:"success"
+  subject_removed: {
+    msg: "Predmet uspesno sklonjen",
+    type: "success"
   }
 }
 
@@ -66,20 +66,20 @@ let podaci = reactive({
 
 const DohvatiStudents = () => {
   podaci.students = false
-  axios.get(url+"/api/Students")
+  axios.get(url + "/api/Students")
     .then((response) => {
       students.value = response.data
       podaci.students = true
       //console.log(response.data);
     })
-    .catch(err => {  Notify( messages.error, err) })
+    .catch(err => { Notify(messages.error, err) })
 }
 const IzmeniStudenta = (arg) => {
-  if(arg.ime.length==0 || arg.prezime.length==0 ){
-      //Notify( "Polje za unos ne sme biti prazno", "failed")
-      Notify(messages.empty_field_not_allowed)
-      return
-    }
+  if (arg.ime.length == 0 || arg.prezime.length == 0) {
+    //Notify( "Polje za unos ne sme biti prazno", "failed")
+    Notify(messages.empty_field_not_allowed)
+    return
+  }
   if (student.value) {
     // let payload = student.value
     // console.log(student.value)
@@ -87,25 +87,38 @@ const IzmeniStudenta = (arg) => {
     // payload.ime = arg.ime
     // payload.prezime = arg.prezime
     let payload = {
-      idStudenta : student.value.idStudenta,
+      idStudenta: student.value.idStudenta,
       ime: arg.ime,
       prezime: arg.prezime,
       broj: 0,
       smer: "1",
-      godinaUpisa:"1"
+      godinaUpisa: "1"
     }
-   
+
     //payload.zapisniks = []
     //payload.studentPredmets = []
     console.log(payload)
-    axios.put(url+`/api/Students/${arg.idStudenta}`, payload)
+    axios.put(url + `/api/Students/${arg.idStudenta}`, payload)
       .then((response) => {
         state.value = 0
         student.value = null
         DohvatiStudents()
         Notify(messages.student_changes_saved)
       })
-      .catch(err => {  Notify( messages.error, err) })
+      .catch(err => { Notify(messages.error, err) })
+  }
+}
+const PretraziStudente = (kriterijum) => {
+  if (kriterijum.length != 0) {
+    axios.get(url + `/api/Students/pretraga/${kriterijum}`)
+      .then((response) => {
+        students.value = response.data
+        podaci.students = true
+      })
+      .catch(err => { Notify(messages.error, err) })
+  }
+  else {
+    DohvatiStudents()
   }
 }
 const DohvatiPredmets = () => {
@@ -114,7 +127,7 @@ const DohvatiPredmets = () => {
     .then((response) => {
       predmets.value = response.data
       podaci.predmets = true
-    }).catch(err => {  Notify( messages.error, err)})
+    }).catch(err => { Notify(messages.error, err) })
 }
 const DodajPredmet = (predmetId, studentId) => {
   let payload = {
@@ -131,7 +144,7 @@ const DodajPredmet = (predmetId, studentId) => {
       Notify(messages.subject_added)
 
 
-    }).catch(err => {  Notify( messages.error, err) })
+    }).catch(err => { Notify(messages.error, err) })
 
 }
 const UkloniPredmet = (predmetId, studentId) => {
@@ -140,7 +153,7 @@ const UkloniPredmet = (predmetId, studentId) => {
       podaci.studentPredmets = false
       DohvatiStudentPredmets()
       Notify(messages.subject_removed)
-    }).catch(err => {  Notify( err, "failed") })
+    }).catch(err => { Notify(err, "failed") })
 }
 const DohvatiStudentPredmets = () => {
   podaci.studentPredmets = false
@@ -148,7 +161,7 @@ const DohvatiStudentPredmets = () => {
     .then((response) => {
       studentPredmets.value = response.data
       podaci.studentPredmets = true
-    }).catch(err => {  Notify( messages.error, err) })
+    }).catch(err => { Notify(messages.error, err) })
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
@@ -156,7 +169,7 @@ const DohvatiZapisniks = () => {
     .then((response) => {
       zapisniks.value = response.data
       podaci.zapisniks = true
-    }).catch(err => {  Notify( messages.error, err) })
+    }).catch(err => { Notify(messages.error, err) })
 }
 const DohvatiIspits = () => {
   podaci.ispits = false
@@ -164,7 +177,7 @@ const DohvatiIspits = () => {
     .then((response) => {
       ispits.value = response.data
       podaci.ispits = true
-    }).catch(err => { Notify( messages.error, err) })
+    }).catch(err => { Notify(messages.error, err) })
 }
 
 onMounted(() => {
@@ -197,6 +210,7 @@ const filtrirano = computed(() => {
   })
 })
 
+
 const Izmeni = (arg) => {
   student.value = arg
   state.value = 1
@@ -212,9 +226,9 @@ const Nazad = () => {
   state.value = 0
 }
 
-const Notify = (message, arg=null)=>{
+const Notify = (message, arg = null) => {
   Poruka.value = messages.default
-  setTimeout(()=>{Poruka.value = arg==null?message:{msg:message.msg +" " + arg, type:message.type}},100)
+  setTimeout(() => { Poruka.value = arg == null ? message : { msg: message.msg + " " + arg, type: message.type } }, 100)
 }
 
 </script>
@@ -224,12 +238,12 @@ const Notify = (message, arg=null)=>{
     <a href="http://pabp.viser.edu.rs:8000/swagger/index.html" target="_blank">API</a><br>
 
     <div v-if="state == 0">
-      <Pretraga @pretraga="arg => kriterijum = arg"></Pretraga>
+      <Pretraga @pretraga="arg => PretraziStudente(arg)"></Pretraga>
       <TabelaStudenata :studenti="filtrirano" @izmeni="Izmeni" @predmeti="Predmeti"></TabelaStudenata>
     </div>
     <StudentForma v-if="state == 1" :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
-    <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad" @dodaj_predmet="DodajPredmet"
-      @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
+    <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad"
+      @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>
