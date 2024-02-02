@@ -5,6 +5,7 @@ import Pretraga from './components/Pretraga.vue';
 import StudentForma from './components/StudentForma.vue';
 import StudentPredmeti from './components/StudentPredmeti.vue';
 import Poruke from './components/Poruke.vue';
+import Prijave from './components/Prijave.vue';
 import axios from 'axios'
 
 const viser_baza = "http://pabp.viser.edu.rs:8000"
@@ -16,7 +17,9 @@ const predmets = ref([])
 const predmetsStudenta = ref([])
 const predmetsStudentaNepolozeni = ref([])
 const predmetsStudentaPolozeni = ref([])
+const ispitsZaPredmet = ref([])
 const prijavaIspita = ref([])
+const prijavaIspitaIspit = ref([])
 const studentPredmets = ref([])
 const zapisniks = ref([])
 const ispits = ref([])
@@ -219,6 +222,12 @@ const DohvatiIspits = () => {
       podaci.ispits = true
     }).catch(err => { Notify(messages.error, err) })
 }
+const DohvatiIspitsPredmeta = (idPredmeta)=>{
+  axios.get(url+`/api/Ispits/predmet/${idPredmeta}`)
+  .then((response)=>{
+    ispitsZaPredmet.value = response.data
+  }).catch(err => { Notify(messages.error, err) })
+}
 const PrijaviIspit = (predmetId, studentId)=>{
   let ispit
   axios.get(url+`/api/Ispits/predmet/${predmetId}`)
@@ -227,7 +236,7 @@ const PrijaviIspit = (predmetId, studentId)=>{
       ispit = response.data
       let payload = {
         idStudenta: studentId,
-        idIspita: ispit.idIspita
+        idIspita: ispit[0].idIspita
       }
       axios.post(url+`/api/Prijava_brojIndeksa`, payload)
       .then((response) => {
@@ -243,6 +252,13 @@ const DohvatiPrijaveStudenta = (studentId)=>{
       prijavaIspita.value = response.data
     }).catch(err => { Notify(messages.error, err) })
 }
+const DohvatiPrijaveIspita = (ispitId)=>{
+  axios.get(url+`/api/Prijava_brojIndeksa/ispit/${ispitId}`)
+    .then((response) => {
+      prijavaIspitaIspit.value = response.data
+    }).catch(err => { Notify(messages.error, err) })
+}
+
 
 onMounted(() => {
   DohvatiStudents()
@@ -292,6 +308,17 @@ const Predmeti = (student) => {
   //Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.smer}-${student.broj}/${student.godinaUpisa}`)
   Notify(messages.student_loaded, `${student.ime} ${student.prezime} ${student.brojIndeksa}`)
 }
+const IzabranPredmet = (idPredmeta)=>{
+  //console.log("predmet izabran", idPredmeta)
+  DohvatiIspitsPredmeta(idPredmeta)
+  //console.log(ispitsZaPredmet.value)
+}
+
+const IzabranIspit = (idIspita)=>{
+  //console.log("ispit izabran",idIspita)
+  DohvatiPrijaveIspita(idIspita)
+  //console.log(prijavaIspitaIspit.value)
+}
 
 const Nazad = () => {
   state.value = 0
@@ -315,6 +342,7 @@ const Notify = (message, arg = null) => {
     <StudentForma v-if="state == 1" :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
     <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad"
       @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet" @prijavi_predmet="PrijaviIspit"></StudentPredmeti>
+    <Prijave :predmeti="predmets" :ispiti="ispitsZaPredmet" :prijave="prijavaIspitaIspit" :studenti="students" @izabran_predmet="IzabranPredmet" @izabran_ispit="IzabranIspit"></Prijave>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>
