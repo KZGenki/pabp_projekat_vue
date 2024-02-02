@@ -16,6 +16,7 @@ const predmets = ref([])
 const predmetsStudenta = ref([])
 const predmetsStudentaNepolozeni = ref([])
 const predmetsStudentaPolozeni = ref([])
+const prijavaIspita = ref([])
 const studentPredmets = ref([])
 const zapisniks = ref([])
 const ispits = ref([])
@@ -54,6 +55,10 @@ const messages = {
   },
   subject_removed: {
     msg: "Predmet uspesno sklonjen",
+    type: "success"
+  },
+  exam_registered:{
+    msg: "Ispit uspesno prijavljen",
     type: "success"
   }
 }
@@ -136,7 +141,7 @@ const DohvatiPredmets = () => {
   podaci.predmets = false
   axios.get(url+`/api/StudentPredmets/predmeti`)
     .then((response) => {
-      console.log(response.data)
+      //console.log(response.data)
       predmets.value = response.data
       podaci.predmets = true
     }).catch(err => { Notify(messages.error, err) })
@@ -192,15 +197,15 @@ const UkloniPredmet = (predmetId, studentId) => {
 }
 const DohvatiStudentPredmets = () => {
   podaci.studentPredmets = false
-  axios.get('http://pabp.viser.edu.rs:8000/api/StudentPredmets')
-    .then((response) => {
-      studentPredmets.value = response.data
-      podaci.studentPredmets = true
-    }).catch(err => { Notify(messages.error, err)})
+  // axios.get(url+'/api/StudentPredmets')
+  //   .then((response) => {
+  //     studentPredmets.value = response.data
+  //     podaci.studentPredmets = true
+  //   }).catch(err => { Notify(messages.error, err)})
 }
 const DohvatiZapisniks = () => {
   podaci.zapisniks = false
-  axios.get('http://pabp.viser.edu.rs:8000/api/Zapisniks')
+  axios.get(url+'/api/Zapisniks')
     .then((response) => {
       zapisniks.value = response.data
       podaci.zapisniks = true
@@ -208,10 +213,34 @@ const DohvatiZapisniks = () => {
 }
 const DohvatiIspits = () => {
   podaci.ispits = false
-  axios.get('http://pabp.viser.edu.rs:8000/api/Ispits')
+  axios.get(url+'/api/Ispits')
     .then((response) => {
       ispits.value = response.data
       podaci.ispits = true
+    }).catch(err => { Notify(messages.error, err) })
+}
+const PrijaviIspit = (predmetId, studentId)=>{
+  let ispit
+  axios.get(url+`/api/Ispits/predmet/${predmetId}`)
+    .then((response) => {
+      console.log(response.data)
+      ispit = response.data
+      let payload = {
+        idStudenta: studentId,
+        idIspita: ispit.idIspita
+      }
+      axios.post(url+`/api/Prijava_brojIndeksa`, payload)
+      .then((response) => {
+          Notify(messages.exam_registered)
+          DohvatiPrijaveStudenta(studentId)
+
+        }).catch(err => { Notify(messages.error, "Ispit vec prijavljen") })
+    }).catch(err => { Notify(messages.error, err) })  
+}
+const DohvatiPrijaveStudenta = (studentId)=>{
+  axios.get(url+`/api/Prijava_brojIndeksa/student/${studentId}`)
+    .then((response) => {
+      prijavaIspita.value = response.data
     }).catch(err => { Notify(messages.error, err) })
 }
 
@@ -285,7 +314,7 @@ const Notify = (message, arg = null) => {
     </div>
     <StudentForma v-if="state == 1" :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
     <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad"
-      @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet"></StudentPredmeti>
+      @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet" @prijavi_predmet="PrijaviIspit"></StudentPredmeti>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>
