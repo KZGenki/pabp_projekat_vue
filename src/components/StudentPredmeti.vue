@@ -11,6 +11,7 @@ const predmets = inject("predmeti")
 const predmetiStudenta = inject("predmetiStudenta")
 const predmetiStudentaPolozeni = inject("predmetiStudentaPolozeni")
 const predmetiStudentaNepolozeni = inject("predmetiStudentaNepolozeni")
+const prijavaIspita = inject("prijavaIspita")
 const nepolozeni = ref(false)
 
 const idZapisniks = computed(()=>{

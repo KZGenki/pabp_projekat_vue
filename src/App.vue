@@ -9,7 +9,7 @@ import Prijave from './components/Prijave.vue';
 import axios from 'axios'
 
 const viser_baza = "http://pabp.viser.edu.rs:8000"
-const local_baza = "http://localhost:5086"
+const local_baza = "http://localhost:5103"
 const url = local_baza
 
 const students = ref([])
@@ -172,7 +172,9 @@ const DodajPredmet = (predmetId, studentId) => {
   let payload = {
     idPredmeta: predmetId,
     idStudenta: studentId,
-    skolskaGodina: "2022/23"
+    skolskaGodina: "2022/23",
+    idPredmetaNavigation: {},
+    idStudentaNavigation: {},
   }
   axios.post(url+'/api/StudentPredmets', payload)
     .then((response) => {
@@ -234,6 +236,11 @@ const PrijaviIspit = (predmetId, studentId)=>{
     .then((response) => {
       console.log(response.data)
       ispit = response.data
+
+      if (ispit.length == 0){
+        Notify(messages.error, "Ispit ne postoji za ovaj predmet")
+        return
+      }
       let payload = {
         idStudenta: studentId,
         idIspita: ispit[0].idIspita
@@ -271,6 +278,7 @@ provide("predmeti", predmets)
 provide("predmetiStudenta", predmetsStudenta)
 provide("predmetiStudentaNepolozeni", predmetsStudentaNepolozeni)
 provide("predmetiStudentaPolozeni", predmetsStudentaPolozeni)
+provide("prijavaIspita", prijavaIspita)
 watch(podaci, () => {
   if (podaci.students && podaci.predmets && podaci.zapisniks && podaci.studentPredmets && podaci.ispits) {
     students.value.forEach((student) => {
