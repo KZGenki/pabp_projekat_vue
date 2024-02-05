@@ -63,6 +63,10 @@ const messages = {
   exam_registered:{
     msg: "Ispit uspesno prijavljen",
     type: "success"
+  },
+  exam_graded:{
+    msg: "Ispit uspesno uveden u zapisnik",
+    type: "success"
   }
 }
 
@@ -327,6 +331,30 @@ const IzabranIspit = (idIspita)=>{
   DohvatiPrijaveIspita(idIspita)
   //console.log(prijavaIspitaIspit.value)
 }
+const UnesiOcenu = (IspitId, StudentId, unetaOcena)=>{
+  console.log("ispit ", IspitId, " student ", StudentId, " ocena ", unetaOcena)
+  let payload = {
+    idStudenta: StudentId,
+    idIspita: IspitId,
+    Ocena: unetaOcena,
+    Bodovi:""
+  }
+  axios.post(url+'/api/Zapisniks', payload)
+    .then((response) => {
+      podaci.zapisniks = false
+      DohvatiPredmetsStudenta(StudentId)
+      DohvatiPredmetsStudentaPolozeni(StudentId)
+      DohvatiPredmetsStudentaNepolozeni(StudentId)
+      DohvatiStudentPredmets()
+      Notify(messages.exam_graded)
+      axios.delete(url+`/api/Prijava_brojIndeksa/${StudentId}/${IspitId}`)
+        .then(()=>{
+          DohvatiPrijaveStudenta(StudentId)
+          DohvatiPrijaveIspita(IspitId)
+        }).catch(err => { Notify(messages.error, err) })
+    }).catch(err => { Notify(messages.error, err) })
+  
+}
 
 const Nazad = () => {
   state.value = 0
@@ -350,7 +378,7 @@ const Notify = (message, arg = null) => {
     <StudentForma v-if="state == 1" :student="student" @sacuvaj="IzmeniStudenta" @nazad="Nazad"></StudentForma>
     <StudentPredmeti v-if="state == 2" :student="studentPredmeti" :predmeti="2" @nazad="Nazad"
       @dodaj_predmet="DodajPredmet" @ukloni_predmet="UkloniPredmet" @prijavi_predmet="PrijaviIspit"></StudentPredmeti>
-    <Prijave :predmeti="predmets" :ispiti="ispitsZaPredmet" :prijave="prijavaIspitaIspit" :studenti="students" @izabran_predmet="IzabranPredmet" @izabran_ispit="IzabranIspit"></Prijave>
+    <Prijave :predmeti="predmets" :ispiti="ispitsZaPredmet" :prijave="prijavaIspitaIspit" :studenti="students" @izabran_predmet="IzabranPredmet" @izabran_ispit="IzabranIspit" @unesi_ocenu="UnesiOcenu"></Prijave>
   </div>
   <Poruke :poruka="Poruka.msg" :type="Poruka.type"></Poruke>
 </template>

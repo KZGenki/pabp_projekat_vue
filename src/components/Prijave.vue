@@ -1,10 +1,11 @@
 <script setup>
 import {ref, computed} from 'vue'
 const props = defineProps(["predmeti", "ispiti","studenti","prijave"])
-const emits = defineEmits(["izabran_predmet","izabran_ispit"])
+const emits = defineEmits(["izabran_predmet","izabran_ispit", "unesi_ocenu"])
 console.log(props)
 const idPredmeta = ref(-1)
 const idIspita = ref(-1)
+const ocena = ref(5)
 const studentiPrijave = computed(()=>{
     //console.log(props.studenti, props.prijave)
     return props.studenti.filter((s)=>{
@@ -34,11 +35,16 @@ const studentiPrijave = computed(()=>{
         <knob @click="()=>{emits('izabran_ispit', idIspita)}" :boja="'GET'" :disabled="idIspita==-1">Izaberi</knob>
     </div>
     <div>
+        Ocena
+        <input type="text" v-model="ocena" :disabled="idIspita==-1">
+    </div>
+    <div>
         <table>
             <tr v-for="student in studentiPrijave">
                 <td>{{ student.ime }}</td>
                 <td>{{ student.prezime }}</td>
-                <td>{{ student.brojIndeksa }}</td>                
+                <td>{{ student.brojIndeksa }}</td>  
+                <td><knob @click="()=>{emits('unesi_ocenu', idIspita, student.idStudenta, ocena)}" :boja="'POST'">Unesi ocenu</knob></td>              
             </tr>
         </table>
     </div>
