@@ -97,9 +97,9 @@ const showZapisniks = ref(false)
                 <th>Naziv predmeta</th>
                 <th>ESPB</th>
                 <th>Status</th>
-                <!-- <th>Ocena</th> -->
+                <th>Ocena</th>
             </tr>
-            <Predmet v-for="predmet in predmetiStudentaPolozeni.polozeniPredmeti" :predmet="predmet" :ocena="' '" ></Predmet>
+            <Predmet v-for="predmet in predmetiStudentaPolozeni.polozeniPredmeti" :predmet="predmet.predmet" :ocena="predmet.ocena" ></Predmet>
         </tr>
     </table>
     </div>
