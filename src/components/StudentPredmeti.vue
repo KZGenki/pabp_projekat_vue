@@ -87,7 +87,7 @@ const showZapisniks = ref(false)
                 <th>Status</th>
                 <th>Akcije</th>
             </tr>
-            <Predmet v-for="predmet in predmetiStudentaNepolozeni" :predmet="predmet" @prijavi="prijavi(predmet.idPredmeta, props.student.idStudenta)" :prijava="1"></Predmet>
+            <Predmet v-for="predmet in predmetiStudentaNepolozeni" :predmet="predmet.predmet" @prijavi="prijavi(predmet.predmet.idPredmeta, props.student.idStudenta)" :prijava="predmet.prijavljen?1:2"></Predmet>
         </tr>
         <tr>
             <td><hr>Polozeni predmeti</td>

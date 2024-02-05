@@ -8,7 +8,7 @@ const emits = defineEmits(["ukloni","prijavi"])
         <td style="text-align: center;">{{ props.predmet.espb }}</td>
         <td>{{ props.predmet.status }}</td>
         <td v-if="props.ocena" style="text-align: center;">{{ props.ocena }}</td>
-        <td v-if="props.prijava"><knob @click="$emit('prijavi')" :boja="'POST'">Prijavi</knob></td>
+        <td v-if="props.prijava"><knob @click="$emit('prijavi')" :boja="'POST'" :disabled="props.prijava<2">{{ props.prijava<2?"Prijavljen":"Prijava" }}</knob></td>
         <td v-if="!props.ocena && !props.prijava"><knob @click="$emit('ukloni')" :boja="'DELETE'">Ukloni</knob></td>
     </tr>
 </template>

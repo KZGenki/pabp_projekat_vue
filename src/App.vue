@@ -253,6 +253,7 @@ const PrijaviIspit = (predmetId, studentId)=>{
       .then((response) => {
           Notify(messages.exam_registered)
           DohvatiPrijaveStudenta(studentId)
+          DohvatiPredmetsStudentaNepolozeni(studentId)
 
         }).catch(err => { Notify(messages.error, "Ispit vec prijavljen") })
     }).catch(err => { Notify(messages.error, err) })  
